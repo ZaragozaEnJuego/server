@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "dev": "concurrently \"tsc --watch\" \"nodemon -q bin/index.js\"",
+    "build": "tsc"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
