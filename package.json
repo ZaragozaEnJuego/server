@@ -4,20 +4,25 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "dev": "concurrently \"tsc --watch\" \"nodemon -q bin/index.js\"",
+    "dev": "nodemon server.ts",
     "build": "tsc"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "~4.16.1",
-    "morgan": "~1.9.1",
-    "nodemon": "^2.0.21"
+    "morgan": "~1.9.1"
   },
   "devDependencies": {
     "@types/express": "^4.17.17",
+    "@types/jest": "^29.4.2",
     "@types/node": "^18.15.3",
-    "concurrently": "^7.6.0",
+    "@types/supertest": "^2.0.12",
+    "jest": "^29.5.0",
+    "nodemon": "^2.0.21",
+    "supertest": "^6.3.3",
+    "ts-jest": "^29.0.5",
+    "ts-node": "^10.9.1",
     "typescript": "^4.9.5"
   }
 }
