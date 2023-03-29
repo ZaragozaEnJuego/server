@@ -1,5 +1,5 @@
-import indexRouter from "./routes/index";
-import usersRouter from "./routes/users";
+import indexRouter from "./api/routes/index";
+import usersRouter from "./api/routes/users";
 
 //FOR TESTING LOOK
 //https://dev.to/nathan_sheryak/how-to-test-a-typescript-express-api-with-jest-for-dummies-like-me-4epd
