@@ -15,7 +15,7 @@ RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/so
 RUN  apt update && apt install yarn -y
 
 # Instalar MongoDB
-RUN wget --no-check-certificate -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | sudo apt-key add -
+RUN wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | sudo apt-key add -
 RUN echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
 RUN apt update -y 
 
