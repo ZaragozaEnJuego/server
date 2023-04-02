@@ -9,6 +9,9 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 
+//Mongoose
+require("./api/models/db.ts");
+
 var app = express();
 
 app.use(logger("dev"));
