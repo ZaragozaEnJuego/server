@@ -1,5 +1,5 @@
 import indexRouter from "./api/routes/index";
-import usersRouter from "./api/routes/users";
+import propertiesRouter from "./api/routes/properties";
 
 //FOR TESTING LOOK
 //https://dev.to/nathan_sheryak/how-to-test-a-typescript-express-api-with-jest-for-dummies-like-me-4epd
@@ -21,6 +21,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
+app.use("/properties", propertiesRouter);
 
 export default app;
