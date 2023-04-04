@@ -1,3 +1,4 @@
+import bodyParser from "body-parser";
 import indexRouter from "./api/routes/index";
 import propertiesRouter from "./api/routes/properties";
 
@@ -13,10 +14,11 @@ var logger = require("morgan");
 require("./api/models/db.ts");
 
 var app = express();
+app.disable("x-powered-by");
 
 app.use(logger("dev"));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
