@@ -1,8 +1,15 @@
 import { Request, Response, Router } from "express";
-import { propertieCreate, propertieList } from "../controllers/properties";
+import {
+  propertieCreate,
+  getPropertieList,
+  getPropertie,
+} from "../controllers/properties";
 var router = Router();
 
 /* GET users listing. */
-router.get("/", propertieList).post("/", propertieCreate);
+router
+  .get("/", getPropertieList)
+  .get("/:id", getPropertie)
+  .post("/", propertieCreate);
 
 export default router;
