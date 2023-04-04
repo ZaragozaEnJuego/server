@@ -39,16 +39,25 @@ const propertieBuy = async (req: Request, res: Response) => {
     return;
   }
 
-  try {
-    const updatedPropertie = await Propertie.findByIdAndUpdate(
-      propertieId,
-      { owner: body.ownerId },
-      { new: true }
-    );
+  // Iniciar una nueva sesión de MongoDB para garantizar atomicidad en todas las consultas
+  const session = await mongoose.startSession();
 
-    res.status(200).json(updatedPropertie);
-  } catch (error) {
-    res.status(500).json({ msg: error });
+  //validate newOwner
+
+  try {
+    await session.withTransaction(async () => {
+      const updatedPropertie = await Propertie.findByIdAndUpdate(
+        propertieId,
+        { owner: body.ownerId },
+        { new: true }
+      );
+      res.status(200).json(updatedPropertie);
+    });
+  } catch (error: any) {
+    res.status(500).json({ msg: error.message });
+  } finally {
+    // Finalizar la sesión de MongoDB
+    session.endSession();
   }
 };
 
