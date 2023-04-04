@@ -24,15 +24,32 @@ const propertieCreate = (req: Request, res: Response) => {
     });
 };
 
-const propertieBuy = (req: Request, res: Response) => {
+const propertieBuy = async (req: Request, res: Response) => {
   interface IBody {
     ownerId: string;
   }
-
+  const propertieId = req.params.id;
   const body: IBody = req.body;
-  console.log(req.body);
 
-  res.status(200).json({ owner: body.ownerId });
+  //check propertie id was provided
+  if (!propertieId) {
+    res.status(404).json({
+      message: "Not found, propertie id is required",
+    });
+    return;
+  }
+
+  try {
+    const updatedPropertie = await Propertie.findByIdAndUpdate(
+      propertieId,
+      { owner: body.ownerId },
+      { new: true }
+    );
+
+    res.status(200).json(updatedPropertie);
+  } catch (error) {
+    res.status(500).json({ msg: error });
+  }
 };
 
 export { propertieCreate, propertieList, propertieBuy };
