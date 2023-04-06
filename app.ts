@@ -1,5 +1,5 @@
-import indexRouter from "./routes/index";
-import usersRouter from "./routes/users";
+import indexRouter from "./api/routes/index";
+import propertiesRouter from "./api/routes/properties";
 import authRouter from "./routes/auth";
 
 //FOR TESTING LOOK
@@ -13,6 +13,9 @@ const passport = require('passport');
 const session = require('express-session');
 
 
+//Mongoose
+require("./api/models/db");
+
 var app = express();
 
 app.use(logger("dev"));
@@ -22,7 +25,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
+app.use("/properties", propertiesRouter);
 
 app.use(session({
     secret: 'cat',
