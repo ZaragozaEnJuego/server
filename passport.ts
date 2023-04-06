@@ -6,10 +6,11 @@ passport.use(
   new GoogleStrategy(
     {
       clientID: "162455912950-gvl6mce1fmkkc80a4g07ppi75maapmjn.apps.googleusercontent.com",
-      clientSecret: config.google.clientSecret,
-      callbackURL: config.google.callbackURL
+      clientSecret: "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",
+      callbackURL: "http://localhost:3000/api/auth/google/callback"
     },
     function(accessToken: any, refreshToken: any, profile: any, cb: any) {
+      //Aquí se tiene acceso ala info del perfil despues de logearse correctamente, mirar en nuestra bd, sascar info del perfil...
       //User.findOrCreate({ googleId: profile.id }, function (err, user) {
       //  return cb(err, user);
       //});
