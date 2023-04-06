@@ -28,10 +28,10 @@ jobs:
           sleep 5
           if [ `curl --write-out %{http_code} --silent --output /dev/null http://localhost:3000` -eq 200 ]; then
             echo "Server is running"
-            kill %1
+            exit 0
           else
             echo "Server failed to start"
-            kill %1
+            
             exit 1
           fi
 
