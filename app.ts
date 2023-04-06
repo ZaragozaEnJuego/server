@@ -1,5 +1,5 @@
-import indexRouter from "./routes/index";
-import usersRouter from "./routes/users";
+import indexRouter from "./api/routes/index";
+import propertiesRouter from "./api/routes/properties";
 
 //FOR TESTING LOOK
 //https://dev.to/nathan_sheryak/how-to-test-a-typescript-express-api-with-jest-for-dummies-like-me-4epd
@@ -8,6 +8,9 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+
+//Mongoose
+require("./api/models/db.ts");
 
 var app = express();
 
@@ -18,6 +21,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
+app.use("/properties", propertiesRouter);
 
 export default app;
