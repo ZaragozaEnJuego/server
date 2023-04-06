@@ -10,7 +10,7 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 
 //Mongoose
-require("./api/models/db");
+require("./api/models/db.ts");
 
 var app = express();
 
