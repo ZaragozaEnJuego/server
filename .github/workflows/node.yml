@@ -1,0 +1,37 @@
+name: Build and Start Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build-and-start:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build
+        run: yarn build
+
+      - name: Start server
+        run: yarn start &
+
+      - name: Test server
+        run: |
+          sleep 5
+          if [ `curl --write-out %{http_code} --silent --output /dev/null http://localhost:3000` -eq 200 ]; then
+            echo "Server is running"
+            kill %1
+          else
+            echo "Server failed to start"
+            kill %1
+            exit 1
+          fi
+
