@@ -1,15 +1,21 @@
 import { Request, Response, Router } from "express";
 import {
-  propertieBuy,
   propertieCreate,
-  propertieList,
+  getPropertieList,
+  getPropertie,
+  propertieBuy,
 } from "../controllers/properties";
 var router = Router();
 
 /* GET users listing. */
 router
-  .get("/", propertieList)
-  .post("/", propertieCreate)
-  .post("/:id/buy", propertieBuy);
+
+  .get("/", getPropertieList)
+  .get("/:id", getPropertie)
+  .post("/:id/buy", propertieBuy)
+  .post("/", propertieCreate);
+
+/**Test endpoints, do not use on production */
+router.post("/test/create", propertieCreate);
 
 export default router;

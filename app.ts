@@ -11,7 +11,7 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 
 //Mongoose
-require("./api/models/db.ts");
+require("./api/models/db");
 
 var app = express();
 app.disable("x-powered-by");
