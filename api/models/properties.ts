@@ -29,6 +29,6 @@ const propertieSchema = new Schema<Propertie>({
 });
 
 const PropertieModel: Model<Propertie> =
-    mongoose.models.Entry || mongoose.model("Entry", propertieSchema);
+    mongoose.models.Propertie || mongoose.model("Propertie", propertieSchema);
 
 export default PropertieModel;

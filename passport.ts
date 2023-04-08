@@ -1,4 +1,5 @@
 import config from "./config";
+import  { findOrCreateUser } from "./api/controllers/users";
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
@@ -10,11 +11,12 @@ passport.use(
       callbackURL: "http://localhost:3000/api/auth/google/callback"
     },
     function(accessToken: any, refreshToken: any, profile: any, cb: any) {
-      //Aquí se tiene acceso ala info del perfil despues de logearse correctamente, mirar en nuestra bd, sascar info del perfil...
-      //User.findOrCreate({ googleId: profile.id }, function (err, user) {
-      //  return cb(err, user);
-      //});
-      cb(null,profile)
+      try {
+        //const user = findOrCreateUser(profile.id, profile.name);
+        return cb(null, profile);
+      } catch (err) {
+        return cb(err);
+      }
     }
   )
 );

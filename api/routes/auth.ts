@@ -1,8 +1,8 @@
-import config from "../config";
+import config from "../../config";
 const express = require('express');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
-require('../passport.ts')
+require('../../passport.ts')
 
 var router = express.Router();
 

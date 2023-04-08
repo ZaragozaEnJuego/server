@@ -1,6 +1,8 @@
 import indexRouter from "./api/routes/index";
 import propertiesRouter from "./api/routes/properties";
-import authRouter from "./routes/auth";
+import usersRouter from "./api/routes/users";
+import authRouter from "./api/routes/auth";
+
 
 //FOR TESTING LOOK
 //https://dev.to/nathan_sheryak/how-to-test-a-typescript-express-api-with-jest-for-dummies-like-me-4epd
@@ -26,6 +28,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
 app.use("/properties", propertiesRouter);
+app.use("/users", usersRouter);
 
 app.use(session({
     secret: 'cat',
