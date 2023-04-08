@@ -27,6 +27,8 @@ const userCreate = (req: Request, res: Response) => {
   const user = Users.create({
     name: "Nombre",
     liquidez: 10000,
+    mail: "prueba",
+    admin: false,
   })
     .then((user) => {
       res.status(201).json(user);

@@ -7,6 +7,6 @@ router
   .get("/", getUserList)
   .get("/:id", getUser)
   .post("/", userCreate)
-  .post("/:id", findOrCreateUser);
+  .post("/:id/", findOrCreateUser);
 
 export default router;

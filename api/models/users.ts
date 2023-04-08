@@ -10,6 +10,8 @@ interface User {
     _id?: string;
     patrimonio: Patrimonio;
     liquidez: number;
+    mail: string;
+    admin: Boolean;
 }
 
 const patrimonioSchema = new Schema<Patrimonio>({
@@ -20,6 +22,8 @@ const userSchema = new Schema<User>({
     name: { type: String, required: true },
     patrimonio: { type: patrimonioSchema, required: false },
     liquidez: { type: Number, required: true },
+    mail: { type: String, required: true},
+    admin: { type: Boolean, required: true},
 });
 
 const UserModel: Model<User> =
