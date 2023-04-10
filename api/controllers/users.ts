@@ -12,23 +12,28 @@ const getUser = (req: Request, res: Response) => {
     .then((user) => res.status(200).json(user))
     .catch((err) => res.status(500).json(err));
 };
-const findOrCreateUser = (req: Request, res: Response) => {
-  Users.findById(req.params.id)
+const findOrCreateUser = (id: string, name: string, mail: string, admin: boolean, res: Response) => {
+  Users.findById(id)
     .then((user) => {
       if (user) {
         res.status(200).json(user);
       } else {
-        userCreate(req, res);
+        Users.create({
+          name: name,
+          liquidez: 10000,
+          mail: mail,
+          admin: admin,
+        })
       }
     })
     .catch((err) => res.status(500).json(err));
 };
 const userCreate = (req: Request, res: Response) => {
   const user = Users.create({
-    name: "Nombre",
+    name: req.params.name,
     liquidez: 10000,
-    mail: "prueba",
-    admin: false,
+    mail: req.params.mail,
+    admin: req.params.admin,
   })
     .then((user) => {
       res.status(201).json(user);

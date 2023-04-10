@@ -1,5 +1,5 @@
 import config from "./config";
-import { Request } from "express";
+import { Response } from "express";
 import  { findOrCreateUser } from "./api/controllers/users";
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
@@ -12,10 +12,10 @@ passport.use(
       callbackURL: "http://localhost:3000/api/auth/google/callback"
     },
     function(accessToken: any, refreshToken: any, profile: any, cb: any) {
-      try {
-        
-        //const user = findOrCreateUser(req, res);
-        return cb(null, profile);
+        const res: Response;
+        findOrCreateUser(accessToken, profile.name, profile.mail, false, res);  //TODO:Mirar como devolver el user
+        const user = res.user;
+        return cb(null, user);
       } catch (err) {
         return cb(err);
       }
