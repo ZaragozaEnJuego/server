@@ -5,7 +5,7 @@ let router = Router()
 
 router
     .get("/negotiation", getOffersList)
-    .get("/negotiation", getOffer)
+    .get("/negotiation/:id", getOffer)
     .post("/negotiation", createOffer)
 
 export default router
