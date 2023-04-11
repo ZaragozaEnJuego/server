@@ -13,7 +13,15 @@ const getOffersList = (req: Request, res: Response) => {
 
 const getOffer = (req: Request, res: Response) => {
     Offer.findById(req.params.id)
-      .then((offer) => res.status(200).json(offer))
+      .then((offer) => {
+        if (offer === null) {
+          res.status(404).json({
+            message: "Offer not found",
+          });
+        } else {
+          res.status(200).json(offer);
+        }
+      })
       .catch((err) => res.status(500).json(err));
 }
 
