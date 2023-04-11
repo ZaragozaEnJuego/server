@@ -12,35 +12,30 @@ const getUser = (req: Request, res: Response) => {
     .then((user) => res.status(200).json(user))
     .catch((err) => res.status(500).json(err));
 };
-const findOrCreateUser = (id: string, name: string, mail: string, admin: boolean, res: Response) => {
-  Users.findById(id)
-    .then((user) => {
-      if (user) {
-        res.status(200).json(user);
-      } else {
-        Users.create({
-          name: name,
-          liquidez: 10000,
-          mail: mail,
-          admin: admin,
-        })
-      }
-    })
-    .catch((err) => res.status(500).json(err));
-};
-const userCreate = (req: Request, res: Response) => {
-  const user = Users.create({
-    name: req.params.name,
-    liquidez: 10000,
-    mail: req.params.mail,
-    admin: req.params.admin,
-  })
-    .then((user) => {
-      res.status(201).json(user);
-    })
-    .catch((err) => {
-      res.status(400).json(err);
-    });
+const findOrCreateUser = (id: string, name: any, mail: string, admin: boolean) => {
+  return new Promise((resolve, reject) => {
+    Users.findOne({ mail: mail })
+      .then((user) => {
+        if (user) {
+          resolve(user);
+          console.log(`El usuario encontrado es: ${user}`);
+        } else {
+          console.log(`No se encontró ningún usuario con el correo ${mail}`)
+          Users.create({
+            name: name,
+            liquidez: 10000,
+            mail: mail,
+            admin: admin,
+          }).then((newUser) => {
+            console.log("Creado correctamente.")
+            resolve(newUser);
+          }).catch((err) => {
+            reject(err);
+          });
+        }
+      })
+      .catch((err) => reject(err));
+  });
 };
 
-export { userCreate, getUserList, getUser, findOrCreateUser };
+export { getUserList, getUser, findOrCreateUser };

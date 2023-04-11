@@ -12,9 +12,8 @@ passport.use(
       callbackURL: "http://localhost:3000/api/auth/google/callback"
     },
     function(accessToken: any, refreshToken: any, profile: any, cb: any) {
-        const res: Response;
-        findOrCreateUser(accessToken, profile.name, profile.mail, false, res);  //TODO:Mirar como devolver el user
-        const user = res.user;
+      try{
+        const user = findOrCreateUser(profile._json.sub, profile._json.name, profile._json.email, false);
         return cb(null, user);
       } catch (err) {
         return cb(err);
@@ -23,15 +22,15 @@ passport.use(
   )
 );
 
-passport.serializeUser((user: any, done: any) => {
+passport.serializeUser((user: any, cb: any) => {
   // Aquí debes serializar al usuario para almacenarlo en la sesión de Passport
-  done(null, user);
+  cb(null, user);
 });
 
-passport.deserializeUser((user: any, done: any) => {
+passport.deserializeUser((user: any, cb: any) => {
   // Aquí debes deserializar al usuario a partir de la sesión de Passport
   //User.findById(id, function(err, user) {
   //  done(err, user);
   //});
-  done(null, user);
+  cb(null, user);
 });
