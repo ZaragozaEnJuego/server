@@ -5,10 +5,16 @@ import { Request, Response } from "express"
 // get Offers when owner == user
 // get Offers when offerer == user
 
-const getOffersList = (req: Request, res: Response) => {
+const getOffererOffers = (req: Request, res: Response) => {
     Offer.find()
     .then(() => res.status(200).json(list))
-    .catch((err) => res.status(500).json(err));
+    .catch((err) => res.status(500).json(err))
+}
+
+const getOwnerOffers = (req: Request, res: Response) => {
+  Offer.find()
+  .then(() => res.status(200).json(list))
+  .catch((err) => res.status(500).json(err))
 }
 
 const getOffer = (req: Request, res: Response) => {
@@ -41,8 +47,7 @@ const createOffer = (req: Request, res: Response) => {
 }
 
 //const deleteOffer
-
 // acceptOffer?? / declineOffer?? --> Pueden ser simplemente eliminadas y estos eventos gestionarlos solo en Frontend
 
-export { getOffersList, getOffer, createOffer }
+export { getOffererOffers, getOwnerOffers, getOffer, createOffer }
 
