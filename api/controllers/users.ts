@@ -14,7 +14,7 @@ const getUser = (req: Request, res: Response) => {
 };
 
 const updateAccess = (req: Request, res: Response) => {
-   if (req.params.id == undefined) {
+   if (req.params.id === undefined) {
     res.status(400).json({
       message: "user id is required",
     });
@@ -22,6 +22,13 @@ const updateAccess = (req: Request, res: Response) => {
   }
   
   const { access } = req.body
+  
+     if (access === undefined) {
+    res.status(400).json({
+      message: "attribute access is required",
+    });
+    return;
+  }
 
   Users.findByIdAndUpdate(
     req.params.id,
