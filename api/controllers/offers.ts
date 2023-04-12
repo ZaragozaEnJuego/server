@@ -4,13 +4,13 @@ import { Request, Response } from "express"
 
 const getOffererOffers = (req: Request, res: Response) => {
     Offer.find({ offerer: req.body.offerer })
-    .then((offer) => res.status(200).json(offer))
+    .then((offer) => offer == null ? res.status(404).json({ message: "Offer not found" }) : res.status(200).json(offer))
     .catch((err) => res.status(500).json(err))
 }
 
 const getOwnerOffers = (req: Request, res: Response) => {
   Offer.find({ owner: req.body.owner })
-  .then((offer) => res.status(200).json(offer))
+  .then((offer) => offer == null ? res.status(404).json({ message: "Offer not found" }) : res.status(200).json(offer))
   .catch((err) => res.status(500).json(err))
 }
 
