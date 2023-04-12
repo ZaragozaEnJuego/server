@@ -7,6 +7,6 @@ router
     .get("/negotiation/:id", getOffererOffers)
     .get("/negotiation/:id", getOwnerOffers)
     .get("/negotiation/:id", getOffer)
-    .post("/negotiation", createOffer)
+    //.post("/negotiation", createOffer) queda pendiente por el momento
 
 export default router
