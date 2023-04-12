@@ -2,18 +2,15 @@ import mongoose from "mongoose"
 import Offer from "../models/offers"
 import { Request, Response } from "express"
 
-// get Offers when owner == user
-// get Offers when offerer == user
-
 const getOffererOffers = (req: Request, res: Response) => {
-    Offer.find()
-    .then(() => res.status(200).json(list))
+    Offer.find({ offerer: req.body.offerer })
+    .then((offer) => res.status(200).json(offer))
     .catch((err) => res.status(500).json(err))
 }
 
 const getOwnerOffers = (req: Request, res: Response) => {
-  Offer.find()
-  .then(() => res.status(200).json(list))
+  Offer.find({ owner: req.body.owner })
+  .then((offer) => res.status(200).json(offer))
   .catch((err) => res.status(500).json(err))
 }
 
@@ -32,7 +29,7 @@ const getOffer = (req: Request, res: Response) => {
 }
 
 const createOffer = (req: Request, res: Response) => {
-    const offer = Offer.create({
+    Offer.create({
         property: "Id_property",
         offerer: "ID_landlord_offerer",
         owner: "ID_landlord_owner",
