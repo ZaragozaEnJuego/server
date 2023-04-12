@@ -14,6 +14,13 @@ const getUser = (req: Request, res: Response) => {
 };
 
 const updateAccess = (req: Request, res: Response) => {
+   if (req.params.id == undefined) {
+    res.status(400).json({
+      message: "user id is required",
+    });
+    return;
+  }
+  
   const { access } = req.body
 
   Users.findByIdAndUpdate(
