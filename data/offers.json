@@ -1,0 +1,18 @@
+[{
+    "_id": {
+        "$oid": "719rop4i184662o9oop27190"
+      },
+      "property": "642ffe7b687431a7aad27610",
+      "offerer": "usuario1",
+      "owner": "usuario2",
+      "amount": 180000
+},
+{
+    "_id": {
+        "$oid": "719rop4i184662o9oop27191"
+      },
+      "property": "642ffe7b687431a7aad27611",
+      "offerer": "usuario2",
+      "owner": "usuario1",
+      "amount": 210000
+}]
