@@ -12,6 +12,18 @@ const getUser = (req: Request, res: Response) => {
     .then((user) => res.status(200).json(user))
     .catch((err) => res.status(500).json(err));
 };
+
+const updateAccess = (req: Request, res: Response) => {
+  const { access } = req.body
+
+  Users.findByIdAndUpdate(
+    req.params.id,
+    { access },
+    { new: true } // devuelve el usuario actualizado
+  ).then((user) => !user ? res.status(404).json({ message: 'User not found' }) : res.status(200).json(user))
+   .catch((err) => res.status(500).json(err))
+}
+
 const findOrCreateUser = (id: string, name: any, mail: string, admin: boolean) => {
   return new Promise((resolve, reject) => {
     Users.findOne({ mail: mail })
@@ -38,4 +50,4 @@ const findOrCreateUser = (id: string, name: any, mail: string, admin: boolean) =
   });
 };
 
-export { getUserList, getUser, findOrCreateUser };
+export { getUserList, getUser, findOrCreateUser, updateAccess };
