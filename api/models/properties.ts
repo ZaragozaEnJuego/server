@@ -1,7 +1,14 @@
 import mongoose, { Model, Schema } from "mongoose";
 
 export type Kind = "Transport" | "Education" | "Health" | "Groceries";
-
+function isKind(s: string): s is Kind {
+    return (
+        s === "Transport" ||
+        s === "Education" ||
+        s === "Health" ||
+        s === "Groceries"
+    );
+}
 interface Propertie {
     name: string;
     _id?: string;
@@ -13,6 +20,7 @@ interface Propertie {
 }
 
 interface KindRestrictions {
+    kind: Kind;
     MaxTemperature: { value: number; modifier: number };
     MinTemperature: { value: number; modifier: number };
     EnergyConsumption: number;
@@ -29,6 +37,11 @@ const propertieSchema = new Schema<Propertie>({
 });
 
 const PropertieModel: Model<Propertie> =
-    mongoose.models.Entry || mongoose.model("Entry", propertieSchema);
+    mongoose.models.Propertie || mongoose.model("Propertie", propertieSchema);
 
+const KindRestrictionsModel: Model<KindRestrictions> =
+    mongoose.models.KindRestrictions ||
+    mongoose.model("KindRestrictions", propertieSchema);
+
+export { KindRestrictionsModel, isKind };
 export default PropertieModel;
