@@ -1,10 +1,7 @@
-import Propertie, {
-    isKind,
-    Kind,
-    KindRestrictionsModel as KindRestrictions,
-} from "../models/properties";
+import Propertie from "../models/properties";
 import { Request, Response } from "express";
 import WeatherDataModel from "../models/temperature";
+import KindRulesModel from "../models/kindRules";
 
 const getPropertieList = (req: Request, res: Response) => {
     Propertie.find()
@@ -35,7 +32,7 @@ const getPropertie = async (req: Request, res: Response) => {
         return;
     }
 
-    const kindResData = await KindRestrictions.findOne({
+    const kindResData = await KindRulesModel.findOne({
         kind: propertie.kind,
     });
     if (kindResData === null) {
@@ -99,16 +96,77 @@ const getPropertie = async (req: Request, res: Response) => {
     });
 };
 
-const getKindRestriction = (req: Request, res: Response) => {
-    const reqKind = req.params.kind;
-    if (typeof reqKind === "string" && isKind(reqKind)) {
-        KindRestrictions.find({ kind: reqKind })
-            .then((kindRes) => {
-                res.status(200).json(kindRes);
-            })
-            .catch((err) => res.status(500).json(err));
-    } else {
-        res.status(400).json({ msg: "Bad kind parameter" });
+const getPropertieRules = async (req: Request, res: Response) => {
+    const propertieId = req.params.id;
+    //check propertie id was provided
+    if (!propertieId) {
+        res.status(404).json({
+            message: "Not found, propertie id is required",
+        });
+        return;
+    }
+
+    Propertie.findById(propertieId)
+        .then((propertie) => {
+            KindRulesModel.find({ kind: propertie?.kind })
+                .then((kindRules) => {
+                    res.status(200).json(kindRules);
+                })
+                .catch((reason) =>
+                    res.status(500).json({
+                        message: "Propertie have not kind rules associated",
+                    })
+                );
+        })
+        .catch((reason) => {
+            res.status(404).json({
+                message: "Not found, propertie does not exist",
+            });
+        });
+};
+
+const propertieBuy = async (req: Request, res: Response) => {
+    interface IBody {
+        ownerId: string;
+    }
+    const propertieId = req.params.id;
+    const body: IBody = req.body;
+
+    //check propertie id was provided
+    if (!propertieId) {
+        res.status(404).json({
+            message: "Not found, propertie id is required",
+        });
+        return;
+    }
+
+    //check owner id was provided
+    if (!body.ownerId) {
+        res.status(400).json({
+            message: "owner id is required",
+        });
+        return;
+    }
+
+    // Iniciar una nueva sesión de MongoDB para garantizar atomicidad en todas las consultas
+    const session = await mongoose.startSession();
+
+    //validate newOwner
+
+    try {
+        await session.withTransaction(async () => {
+            const updatedPropertie = await Propertie.findByIdAndUpdate(
+                propertieId,
+                { owner: body.ownerId },
+                { new: true }
+            );
+            res.status(201).json(updatedPropertie);
+        });
+    } catch (error: any) {
+        res.status(500).json({ msg: error.message });
+    } finally {
+        // Finalizar la sesión de MongoDB
+        session.endSession();
     }
 };
 
@@ -128,4 +186,10 @@ const propertieCreate = (req: Request, res: Response) => {
         });
 };
 
-export { propertieCreate, getPropertieList, getPropertie, getKindRestriction };
+export {
+    propertieCreate,
+    getPropertieList,
+    getPropertie,
+    getPropertieRules,
+    propertieBuy,
+};

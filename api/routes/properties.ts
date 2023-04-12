@@ -3,7 +3,8 @@ import {
     propertieCreate,
     getPropertieList,
     getPropertie,
-    getKindRestriction,
+    getPropertieRules,
+    propertieBuy,
 } from "../controllers/properties";
 var router = Router();
 
@@ -11,7 +12,10 @@ var router = Router();
 router
     .get("/", getPropertieList)
     .get("/:id", getPropertie)
-    .get("/restrictions/:kind", getKindRestriction)
-    .post("/", propertieCreate);
+    .get("/:id/kindrules", getPropertieRules)
+    .post("/:id/buy", propertieBuy);
+
+/**Test endpoints, do not use on production */
+router.post("/test/create", propertieCreate);
 
 export default router;
