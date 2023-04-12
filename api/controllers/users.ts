@@ -12,6 +12,32 @@ const getUser = (req: Request, res: Response) => {
     .then((user) => res.status(200).json(user))
     .catch((err) => res.status(500).json(err));
 };
+
+const updateAccess = (req: Request, res: Response) => {
+   if (req.params.id === undefined) {
+    res.status(400).json({
+      message: "user id is required",
+    });
+    return;
+  }
+  
+  const { access } = req.body
+  
+     if (access === undefined) {
+    res.status(400).json({
+      message: "attribute access is required",
+    });
+    return;
+  }
+
+  Users.findByIdAndUpdate(
+    req.params.id,
+    { access },
+    { new: true } // devuelve el usuario actualizado
+  ).then((user) => !user ? res.status(404).json({ message: 'User not found' }) : res.status(200).json(user))
+   .catch((err) => res.status(500).json(err))
+}
+
 const findOrCreateUser = (id: string, name: any, mail: string, admin: boolean) => {
   return new Promise((resolve, reject) => {
     Users.findOne({ mail: mail })
@@ -38,4 +64,4 @@ const findOrCreateUser = (id: string, name: any, mail: string, admin: boolean) =
   });
 };
 
-export { getUserList, getUser, findOrCreateUser };
+export { getUserList, getUser, findOrCreateUser, updateAccess };
