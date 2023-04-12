@@ -1,7 +1,7 @@
 import mongoose, { Model, Schema } from "mongoose"
 
 interface Offer {
-    id: string,
+    _id?: string,
     property: string,
     offerer: string,
     owner: string,
