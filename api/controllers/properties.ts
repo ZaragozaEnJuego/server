@@ -4,12 +4,106 @@ import WeatherDataModel from "../models/temperature";
 import KindRulesModel from "../models/kindRules";
 import mongoose from "mongoose";
 
+/**
+ * @swagger
+ * tags:
+ *   name: Properties
+ *   description: The properties managing API
+ * /properties:
+ *   get:
+ *     summary: List all properties
+ *     tags: [Properties]
+ *     responses:
+ *       200:
+ *         description: The list of properties.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                     description: The auto-generated id of the propertie
+ *                     nullable: true
+ *                   name:
+ *                     type: string
+ *                   address:
+ *                     type: string
+ *                   price:
+ *                     type: number
+ *                   income:
+ *                     type: number
+ *                   owner:
+ *                     type: string
+ *                   kind:
+ *                     type: string
+ *       500:
+ *         description: Some server error
+ *
+ */
 const getPropertieList = (req: Request, res: Response) => {
     Propertie.find()
         .then((list) => res.status(200).json(list))
         .catch((err) => res.status(500).json(err));
 };
-
+/**
+ * @swagger
+ * tags:
+ *   name: Properties
+ *   description: The properties managing API
+ * /properties/{id}::
+ *   get:
+ *     summary: Get the propertie by id
+ *     tags: [Properties]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The propertie id
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   description: The auto-generated id of the propertie
+ *                 name:
+ *                   type: string
+ *                 address:
+ *                   type: string
+ *                 price:
+ *                   type: number
+ *                 income:
+ *                   type: number
+ *                 owner:
+ *                   type: string
+ *                 kind:
+ *                   type: string
+ *                 stats:
+ *                   type: object
+ *                   properties:
+ *                     date:
+ *                       type: string
+ *                       format: date-time
+ *                       description: The date of the stats
+ *                     income:
+ *                       type: number
+ *                       description: The income of the stats
+ *
+ *       404:
+ *         description: The propertie does not exis
+ *       500:
+ *         description: Some server error
+ *
+ */
 const getPropertie = async (req: Request, res: Response) => {
     if (req.params.id === undefined) {
         res.status(400).json({ msg: "No id provided" });
@@ -17,7 +111,7 @@ const getPropertie = async (req: Request, res: Response) => {
     }
     const propertie = await Propertie.findById(req.params.id);
     if (propertie === null) {
-        res.status(400).json({ msg: "Propertie does not exist" });
+        res.status(404).json({ msg: "Propertie does not exist" });
         return;
     }
 
@@ -85,6 +179,7 @@ const getPropertie = async (req: Request, res: Response) => {
                 weatherModifier,
         };
     });
+
     res.status(200).json({
         name: propertie.name,
         _id: propertie._id,
@@ -96,6 +191,77 @@ const getPropertie = async (req: Request, res: Response) => {
         stats: stats,
     });
 };
+
+/**
+ * @swagger
+ * tags:
+ *   name: Properties
+ *   description: The properties managing API
+ * /properties/{id}/rules:
+ *   get:
+ *     summary: Get kind rules for a specific property
+ *     tags: [Properties]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the property
+ *     responses:
+ *       200:
+ *         description: Kind rules of the property
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 kind:
+ *                   type: string
+ *                   enum: [transport, education, health, groceries]
+ *                   description: The kind of the property
+ *                 MaxTemperature:
+ *                   type: object
+ *                   properties:
+ *                     value:
+ *                       type: number
+ *                       description: Maximum temperature value
+ *                     modifier:
+ *                       type: number
+ *                       description: Temperature modifier
+ *                   description: The maximum temperature rules
+ *                 MinTemperature:
+ *                   type: object
+ *                   properties:
+ *                     value:
+ *                       type: number
+ *                       description: Minimum temperature value
+ *                     modifier:
+ *                       type: number
+ *                       description: Temperature modifier
+ *                   description: The minimum temperature rules
+ *                 EnergyConsumption:
+ *                   type: number
+ *                   description: The energy consumption rules
+ *                 Weather:
+ *                   type: object
+ *                   properties:
+ *                     sunny:
+ *                       type: number
+ *                       description: The sunny weather rules
+ *                     rainy:
+ *                       type: number
+ *                       description: The rainy weather rules
+ *                     cloudy:
+ *                       type: number
+ *                       description: The cloudy weather rules
+ *                   description: The weather rules
+ *       404:
+ *         description: Not found, property does not exist
+ *       500:
+ *         description: Some server error
+ *
+ */
 
 const getPropertieRules = async (req: Request, res: Response) => {
     const propertieId = req.params.id;
@@ -125,7 +291,87 @@ const getPropertieRules = async (req: Request, res: Response) => {
             });
         });
 };
-
+/**
+ * @swagger
+ * /properties/{id}/buy:
+ *   post:
+ *     summary: Comprar propiedad
+ *     tags: [Properties]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de la propiedad a comprar
+ *     requestBody:
+ *       description: Datos del comprador
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               ownerId:
+ *                 type: string
+ *                 description: ID del nuevo propietario
+ *     responses:
+ *       201:
+ *         description: Propiedad comprada exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   description: ID de la propiedad comprada
+ *                 name:
+ *                   type: string
+ *                   description: Nombre de la propiedad
+ *                 address:
+ *                   type: string
+ *                   description: Dirección de la propiedad
+ *                 price:
+ *                   type: number
+ *                   description: Precio de la propiedad
+ *                 income:
+ *                   type: number
+ *                   description: Ingreso generado por la propiedad
+ *                 owner:
+ *                   type: string
+ *                   description: Nuevo propietario de la propiedad
+ *       400:
+ *         description: Petición incorrecta, faltan parámetros
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Mensaje de error
+ *       404:
+ *         description: Propiedad no encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Mensaje de error
+ *       500:
+ *         description: Error del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Mensaje de error del servidor
+ */
 const propertieBuy = async (req: Request, res: Response) => {
     interface IBody {
         ownerId: string;
