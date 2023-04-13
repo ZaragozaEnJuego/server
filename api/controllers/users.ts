@@ -79,9 +79,9 @@ import { Request, Response, response } from "express";
  *
  */
 const getUserList = (req: Request, res: Response) => {
-  Users.find()
-    .then((list) => res.status(200).json(list))
-    .catch((err) => res.status(500).json(err));
+    Users.find()
+        .then((list) => res.status(200).json(list))
+        .catch((err) => res.status(500).json(err));
 };
 /**
  * @swagger
@@ -169,74 +169,74 @@ const getUserList = (req: Request, res: Response) => {
  *
  */
 const getUser = (req: Request, res: Response) => {
-  Users.findById(req.params.id)
-    .then((user) => res.status(200).json(user))
-    .catch((err) => res.status(500).json(err));
+    Users.findById(req.params.id)
+        .then((user) => res.status(200).json(user))
+        .catch((err) => res.status(500).json(err));
 };
 
-/**
- * @swagger
- * tags:
- *   name: Users
- *   description: The users managing API
- * /users/{id}::
- *   patch:
- *     summary: 
- *     tags: [Users]
- *     responses:
- *      400:
- *        description: The user id is required or attribute access is required
- * 
- **/
 const updateAccess = (req: Request, res: Response) => {
-   if (req.params.id === undefined) {
-    res.status(400).json({
-      message: "user id is required",
-    });
-    return;
-  }
-  
-  const { access } = req.body
-  
-     if (access === undefined) {
-    res.status(400).json({
-      message: "attribute access is required",
-    });
-    return;
-  }
+    if (req.params.id === undefined) {
+        res.status(400).json({
+            message: "user id is required",
+        });
+        return;
+    }
 
-  Users.findByIdAndUpdate(
-    req.params.id,
-    { access },
-    { new: true } // devuelve el usuario actualizado
-  ).then((user) => !user ? res.status(404).json({ message: 'User not found' }) : res.status(200).json(user))
-   .catch((err) => res.status(500).json(err))
-}
+    const { access } = req.body;
 
-const findOrCreateUser = (id: string, name: any, mail: string, admin: boolean) => {
-  return new Promise((resolve, reject) => {
-    Users.findOne({ mail: mail })
-      .then((user) => {
-        if (user) {
-          resolve(user);
-          console.log(`El usuario encontrado es: ${user}`);
-        } else {
-          console.log(`No se encontró ningún usuario con el correo ${mail}`)
-          Users.create({
-            name: name,
-            liquidez: 10000,
-            mail: mail,
-            admin: admin,
-          }).then((newUser) => {
-            console.log("Creado correctamente.")
-            resolve(newUser);
-          }).catch((err) => {
-            reject(err);
-          });
-        }
-      })
-      .catch((err) => reject(err));
-  });
+    if (access === undefined) {
+        res.status(400).json({
+            message: "attribute access is required",
+        });
+        return;
+    }
+
+    Users.findByIdAndUpdate(
+        req.params.id,
+        { access },
+        { new: true } // devuelve el usuario actualizado
+    )
+        .then((user) =>
+            !user
+                ? res.status(404).json({ message: "User not found" })
+                : res.status(200).json(user)
+        )
+        .catch((err) => res.status(500).json(err));
+};
+
+const findOrCreateUser = (
+    id: string,
+    name: any,
+    mail: string,
+    admin: boolean
+) => {
+    return new Promise((resolve, reject) => {
+        Users.findOne({ mail: mail })
+            .then((user) => {
+                if (user) {
+                    resolve(user);
+                    console.log(`El usuario encontrado es: ${user}`);
+                } else {
+                    console.log(
+                        `No se encontró ningún usuario con el correo ${mail}`
+                    );
+                    Users.create({
+                        name: name,
+                        liquidez: 10000,
+                        mail: mail,
+                        admin: admin,
+                    })
+                        .then((newUser) => {
+                            console.log("Creado correctamente.");
+                            resolve(newUser);
+                        })
+                        .catch((err) => {
+                            reject(err);
+                        });
+                }
+            })
+            .catch((err) => reject(err));
+    });
 };
 
 export { getUserList, getUser, findOrCreateUser, updateAccess };
