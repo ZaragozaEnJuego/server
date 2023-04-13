@@ -15,6 +15,7 @@ const weatherDataSchema = new Schema<WeatherData>({
 });
 
 const WeatherDataModel: Model<WeatherData> =
-    mongoose.models.WeatherData || mongoose.model("WeatherData", weatherDataSchema);
+    mongoose.models.WeatherData ||
+    mongoose.model("WeatherData", weatherDataSchema);
 
 export default WeatherDataModel;
