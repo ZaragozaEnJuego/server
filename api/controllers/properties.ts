@@ -2,6 +2,7 @@ import Propertie from "../models/properties";
 import { Request, Response } from "express";
 import WeatherDataModel from "../models/temperature";
 import KindRulesModel from "../models/kindRules";
+import mongoose from "mongoose";
 
 const getPropertieList = (req: Request, res: Response) => {
     Propertie.find()
