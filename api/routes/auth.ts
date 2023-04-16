@@ -18,7 +18,7 @@ router.get(
     const token = jwt.sign(
       { user: req.body.user },
       'cat',
-      { expiresIn: '1h' }
+      { expiresIn: '14h' }
     );
     //envio del JWT como respuesta al cliente
     res.json({ token });

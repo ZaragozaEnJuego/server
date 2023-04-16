@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
-var dbURI = "mongodb://127.0.0.1:27017/ZaragozaEnJuego";
+//var dbURI = "mongodb://127.0.0.1:27017/ZaragozaEnJuego";
+
+var dbURI = "mongodb+srv://774572:1234@cluster0.pszz7mi.mongodb.net/?retryWrites=true&w=majority"
 
 if (
     process.env.NODE_ENV === "production" &&
