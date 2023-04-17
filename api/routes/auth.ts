@@ -2,7 +2,7 @@ import config from "../../config";
 const express = require('express');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
-require('../../passport')
+require('../../passport');
 
 var router = express.Router();
 
@@ -20,6 +20,7 @@ router.get(
       'cat',
       { expiresIn: '14h' }
     );
+
     //envio del JWT como respuesta al cliente
     res.json({ token });
   }

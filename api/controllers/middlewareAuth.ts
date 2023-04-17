@@ -22,7 +22,7 @@ function authMiddleware(req: Request, res: Response, next: NextFunction) {
     const payload = verifyToken(token, secret);
   
     if (!payload) {
-      return res.status(401).json({ message: 'Token invalid' });
+      return res.status(403).json({ message: 'Token invalid' });
     }
   
     // Guardar el payload en la solicitud para que se pueda acceder en la ruta protegida
