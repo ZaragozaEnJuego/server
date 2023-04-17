@@ -8,10 +8,12 @@ interface Patrimonio {
 interface User {
     name: string;
     _id?: string;
+    icon?: string;
     patrimonio: Patrimonio;
     liquidez: number;
     mail: string;
-    admin: Boolean;
+    access: boolean;
+    admin: boolean;
 }
 
 const patrimonioSchema = new Schema<Patrimonio>({
