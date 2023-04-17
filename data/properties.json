@@ -1,0 +1,24 @@
+[{
+  "_id": {
+    "$oid": "642ffe7b687431a7aad27610"
+  },
+  "name": "Bonaparte",
+  "kind": "groceries",
+  "lng": -0.8881719,
+  "lat": 41.6427539,
+  "price": 125355,
+  "address": "Avenida Francisco de Goya, 17",
+  "income": 1611,
+  "owner": "Pepe"
+},{
+  "_id": {
+    "$oid": "642ffe7b687431a7aad27611"
+  },
+  "name": "El Fuelle",
+  "kind": "groceries",
+  "lng": -0.8743648,
+  "lat": 41.6526014,
+  "price": 184505,
+  "address": "Calle Mayor, 59",
+  "income": 1216
+}]
