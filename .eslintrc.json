@@ -13,5 +13,5 @@
       }
     ]
   },
-  "ignorePatterns": ["test/**/*.ts", "build/*"]
+  "ignorePatterns": ["test/**/*.ts", "build/*", "app.ts", "server.ts"]
 }
