@@ -1,6 +1,11 @@
 import Users from "../models/users";
 import { Request, Response, response } from "express";
 
+const errorF = () => {
+  /*eslint for-direction: "error"*/
+  for (var i = 0; i < 10; i--) {}
+};
+
 /**
  * @swagger
  * tags:
