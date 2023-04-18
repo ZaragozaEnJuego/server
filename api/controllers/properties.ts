@@ -44,9 +44,10 @@ import mongoose from "mongoose";
  *
  */
 const getPropertieList = (req: Request, res: Response) => {
-  Propertie.find()
-    .then((list) => res.status(200).json(list))
-    .catch((err) => res.status(500).json(err));
+  Propertie.find().then((list) => {
+    console.log(list);
+    res.status(200).json(list);
+  });
 };
 /**
  * @swagger
