@@ -94,7 +94,7 @@ const getUser = (req: Request, res: Response) => {
 
 const findOrCreateUser = (
   id: string,
-  name: any,
+  name: string,
   mail: string,
   admin: boolean
 ) => {
