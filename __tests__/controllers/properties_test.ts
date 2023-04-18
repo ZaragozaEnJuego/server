@@ -34,4 +34,16 @@ describe("getPropertieList", () => {
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(expectedProperties);
   });
+
+  it("should return a 500 error when there is an error with the database", async () => {
+    // Define el error que debe devolver el modelo mock cuando se llama a "find"
+
+    jest.mocked(PropertieModel.find).mockRejectedValueOnce({});
+
+    // Ejecuta la función que quieres probar
+    await getPropertieList(req, res);
+
+    // Comprueba que la respuesta tiene el código de estado y el error esperados
+    expect(res.status).toHaveBeenCalledWith(500);
+  });
 });
