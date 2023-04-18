@@ -1,28 +1,96 @@
 import Users from "../models/users";
 import { Request, Response, response } from "express";
-import Propertie from "../models/properties";
 
+/**
+ * @swagger
+ * tags:
+ *   name: Users
+ *   description: The users managing API
+ * /users/{id}::
+ *   get:
+ *     summary: Get the propertie by id
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The propertie id
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                   _id:
+ *                     type: string
+ *                     description: The auto-generated id of the propertie
+ *                     nullable: true
+ *                   name:
+ *                     type: string
+ *                   icon:
+ *                     type: string
+ *                   patrimonio:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         description: The auto-generated id of the propertie
+ *                       name:
+ *                         type: string
+ *                       address:
+ *                         type: string
+ *                       price:
+ *                         type: number
+ *                       income:
+ *                         type: number
+ *                       owner:
+ *                         type: string
+ *                       kind:
+ *                         type: string
+ *                       stats:
+ *                         type: object
+ *                         properties:
+ *                            date:
+ *                              type: string
+ *                              format: date-time
+ *                              description: The date of the stats
+ *                            income:
+ *                            type: number
+ *                            description: The income of the stats
+ *                   liquidez:
+ *                     type: number
+ *                   mail:
+ *                     type: string
+ *                   access:
+ *                     type: boolean
+ *                   admin:
+ *                     type: boolean
+ *                   stats:
+ *                   type: object
+ *                   properties:
+ *                     date:
+ *                       type: string
+ *                       format: date-time
+ *                       description: The date of the stats
+ *                     income:
+ *                       type: number
+ *                       description: The income of the stats
+ *
+ *       404:
+ *         description: The user does not exis
+ *       500:
+ *         description: Some server error
+ *
+ */
 const getUser = (req: Request, res: Response) => {
   Users.findById(req.params.id)
-    .then(async (user) => {
-      if (!user) {
-        res.status(404).json({ msg: "User does not exist" });
-        return;
-      }
-
-      const properties = await Propertie.find({ owner: user._id });
-
-      res.status(200).json({
-        name: user.name,
-        _id: user._id,
-        liquidity: user.liquidity,
-        properties: properties,
-        //add stats
-      });
-    })
+    .then((user) => res.status(200).json(user))
     .catch((err) => res.status(500).json(err));
 };
-//esta función ira en el controlador de admin y unicamente mandara
 
 const findOrCreateUser = (
   id: string,
