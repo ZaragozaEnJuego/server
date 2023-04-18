@@ -1,6 +1,6 @@
 import Propertie from "../models/properties";
 import { Request, Response } from "express";
-import WeatherDataModel from "../models/temperature";
+import WeatherDataModel from "../models/stats";
 import KindRulesModel from "../models/kindRules";
 import mongoose from "mongoose";
 
