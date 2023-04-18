@@ -3,7 +3,7 @@ import mongoose, { Model, Schema } from "mongoose";
 export interface WeatherData {
     date: Date;
     temperature: number;
-    state: String;
+    state: string;
     electricity: number;
 }
 

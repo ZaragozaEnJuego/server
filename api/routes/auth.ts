@@ -4,7 +4,7 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 require('../../passport')
 
-var router = express.Router();
+const router = express.Router();
 
 router.get(
   '/google',

@@ -6,7 +6,7 @@ import {
     getPropertieRules,
     propertieBuy,
 } from "../controllers/properties";
-var router = Router();
+const router = Router();
 
 /* GET users listing. */
 router
