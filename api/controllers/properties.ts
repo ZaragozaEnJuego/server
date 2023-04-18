@@ -43,14 +43,13 @@ import mongoose from "mongoose";
  *         description: Some server error
  *
  */
-const getPropertieList = (req: Request, res: Response) => {
-  Propertie.find()
-    .then((list) => {
-      res.status(200).json(list);
-      return;
-    })
-    .catch((err) => {});
-  res.status(500).json({ msg: "Internal server error" });
+const getPropertieList = async (req: Request, res: Response) => {
+  try {
+    const list = await Propertie.find();
+    res.status(200).json(list);
+  } catch (err) {
+    res.status(500).json({ msg: "Internal server error" });
+  }
 };
 /**
  * @swagger
