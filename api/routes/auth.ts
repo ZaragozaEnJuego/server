@@ -16,13 +16,13 @@ router.get(
   passport.authenticate('google', { failureRedirect: '/login' }),
   (req: any, res: any) => {
     const token = jwt.sign(
-      { name: req.body.name, mail: req.body.mail },
+      { mail: req.body.mail },
       'cat',
       { expiresIn: '14h' }
     );
 
     //envio del JWT como respuesta al cliente
-    res.json({ token });
+    res.json({ token, isAdmin: false });
   }
 );
 
