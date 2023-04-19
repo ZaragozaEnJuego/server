@@ -1,7 +1,8 @@
 
 const config = {
   server:{
-    port: '3000'
+    port: '3000',
+    secret: process.env.SERVER_SECRET
   },
   google: {
     clientID: process.env.GOOGLE_CLIENT_ID,
@@ -10,6 +11,9 @@ const config = {
   },
   jwt: {
     secret: process.env.JWT_SECRET
+  },
+  db: {
+    uri: process.env.DB_URI
   }
 };
 

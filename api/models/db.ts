@@ -1,6 +1,10 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const mongoose = require("mongoose");
-let dbURI = "mongodb://127.0.0.1:27017/ZaragozaEnJuego";
+import config from "../../config";
+
+
+var dbURI = "mongodb://127.0.0.1:27017/ZaragozaEnJuego";
+
 
 if (
   process.env.NODE_ENV === "production" &&
