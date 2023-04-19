@@ -13,5 +13,5 @@
       }
     ]
   },
-  "ignorePatterns": ["test/**/*.ts", "build/*", "app.ts", "server.ts"]
-}
+  "ignorePatterns": ["__tests__/**/*.ts", "build/*","coverage/","jest.config.js", "app.ts", "server.ts"]
+} 
