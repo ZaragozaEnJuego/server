@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
+import config from "../../config";
 var dbURI = "mongodb://127.0.0.1:27017/ZaragozaEnJuego";
+//var dbURI = config.db.uri
 
 if (
     process.env.NODE_ENV === "production" &&
