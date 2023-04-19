@@ -1,12 +1,8 @@
 import { Request, Response, Router } from "express";
-import { getUserList, getUser, updateAccess } from "../controllers/users";
+import { getUser } from "../controllers/users";
 var router = Router();
 
 /* GET users listing. */
-router
-  .get("/", getUserList)
-  .get("/:id", getUser)
-  .patch("/:id", updateAccess)
-
+router.get("/:id", getUser);
 
 export default router;
