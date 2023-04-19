@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 import config from "../../config";
 
 
-var dbURI = "mongodb://127.0.0.1:27017/ZaragozaEnJuego";
+let dbURI = "mongodb://127.0.0.1:27017/ZaragozaEnJuego";
 
 
 if (
