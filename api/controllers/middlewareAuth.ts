@@ -25,9 +25,6 @@ function authMiddleware(req: Request, res: Response, next: NextFunction) {
       return res.status(403).json({ message: 'Token invalid' });
     }
   
-    // Guardar el payload en la solicitud para que se pueda acceder en la ruta protegida
-    req.body.user = payload;
-  
     next();
   }
 
