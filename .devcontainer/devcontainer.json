@@ -1,18 +1,17 @@
 {
-    "name": "node-template",
+  "name": "node-template",
 
-    "dockerFile": "Dockerfile",
+  "dockerFile": "Dockerfile",
 
-
-
-    "customizations": {
-        "vscode": {
-            "extensions": [
-                "esbenp.prettier-vscode",
-                "dsznajder.es7-react-js-snippets",
-                "formulahendry.terminal"
-            ]
-        }
-    },
-    "remoteUser": "vscode"
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "esbenp.prettier-vscode",
+        "dsznajder.es7-react-js-snippets",
+        "formulahendry.terminal",
+        "dbaeumer.vscode-eslint"
+      ]
+    }
+  },
+  "remoteUser": "vscode"
 }

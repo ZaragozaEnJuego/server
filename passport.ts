@@ -1,19 +1,29 @@
 import config from "./config";
-import { Response } from "express";
-import  { findOrCreateUser } from "./api/controllers/users";
-const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
+import { findOrCreateUser } from "./api/controllers/users";
+import passport from "passport";
+import GoogleStrategy from "passport-google-oauth20";
 
 passport.use(
-  new GoogleStrategy(
+  new GoogleStrategy.Strategy(
     {
-      clientID: "162455912950-gvl6mce1fmkkc80a4g07ppi75maapmjn.apps.googleusercontent.com",
+      clientID:
+        "162455912950-gvl6mce1fmkkc80a4g07ppi75maapmjn.apps.googleusercontent.com",
       clientSecret: "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",
-      callbackURL: "http://localhost:3000/api/auth/google/callback"
+      callbackURL: "http://localhost:3000/api/auth/google/callback",
     },
-    function(accessToken: any, refreshToken: any, profile: any, cb: any) {
-      try{
-        const user = findOrCreateUser(profile._json.sub, profile._json.name, profile._json.email, false);
+    function (
+      accessToken: string,
+      refreshToken: string,
+      profile: GoogleStrategy.Profile,
+      cb: any
+    ) {
+      try {
+        //checking values
+        const name: string =
+          profile._json.name === undefined ? "" : profile._json.name;
+        const email: string =
+          profile._json.email === undefined ? "" : profile._json.email;
+        const user = findOrCreateUser(profile._json.sub, name, email, false);
         return cb(null, user);
       } catch (err) {
         return cb(err);

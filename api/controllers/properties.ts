@@ -264,7 +264,7 @@ const getPropertie = async (req: Request, res: Response) => {
 const getPropertieRules = async (req: Request, res: Response) => {
   const propertieId = req.params.id;
   //check propertie id was provided
-  if (!propertieId) {
+  if (propertieId === undefined) {
     res.status(404).json({
       message: "Not found, propertie id is required",
     });
@@ -378,7 +378,7 @@ const propertieBuy = async (req: Request, res: Response) => {
   const body: IBody = req.body;
 
   //check propertie id was provided
-  if (!propertieId) {
+  if (propertieId === undefined) {
     res.status(404).json({
       message: "Not found, propertie id is required",
     });
@@ -386,7 +386,7 @@ const propertieBuy = async (req: Request, res: Response) => {
   }
 
   //check owner id was provided
-  if (!body.ownerId) {
+  if (body.ownerId === undefined) {
     res.status(400).json({
       message: "owner id is required",
     });

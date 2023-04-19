@@ -1,17 +1,20 @@
+import { Response, Request } from "express";
 import config from "../../config";
-const express = require('express');
-const passport = require('passport');
-const jwt = require('jsonwebtoken');
-require('../../passport');
 
-var router = express.Router();
+import express from "express";
+import passport from "passport";
+import jwt from "jsonwebtoken";
+require("../../passport");
+
+const router = express.Router();
 
 router.get(
-  '/google',
-  passport.authenticate('google', { scope: ['profile', 'email'] })
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
 router.get(
+
   '/google/callback',
   passport.authenticate('google', { failureRedirect: '/login' }),
   (req: any, res: any) => {

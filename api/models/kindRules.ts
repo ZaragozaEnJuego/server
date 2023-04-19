@@ -27,6 +27,7 @@ const KindRulesSchema = new Schema<KindRules>({
 });
 
 const KindRulesModel: Model<KindRules> =
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   mongoose.models.KindRules || mongoose.model("KindRules", KindRulesSchema);
 
 export default KindRulesModel;
