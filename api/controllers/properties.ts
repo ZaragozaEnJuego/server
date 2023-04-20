@@ -421,26 +421,4 @@ const propertieBuy = async (req: Request, res: Response) => {
     }
 };
 
-const propertieCreate = (req: Request, res: Response) => {
-    const propertie = PropertieModel.create({
-        name: "Nombre",
-        address: "Dirección",
-        income: 100,
-        price: 10000,
-        kind: "Health",
-    })
-        .then((propertie) => {
-            res.status(201).json(propertie);
-        })
-        .catch((err) => {
-            res.status(400).json(err);
-        });
-};
-
-export {
-    propertieCreate,
-    getPropertieList,
-    getPropertie,
-    getPropertieRules,
-    propertieBuy,
-};
+export { getPropertieList, getPropertie, getPropertieRules, propertieBuy };
