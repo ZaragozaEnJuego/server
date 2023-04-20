@@ -276,23 +276,24 @@ const getPropertieRules = async (req: Request, res: Response) => {
         return;
     }
 
-    PropertieModel.findById(propertieId)
-        .then((propertie) => {
-            KindRulesModel.find({ kind: propertie?.kind })
-                .then((kindRules) => {
-                    res.status(200).json(kindRules);
-                })
-                .catch((reason) =>
-                    res.status(500).json({
-                        message: "Propertie have not kind rules associated",
-                    })
-                );
-        })
-        .catch((reason) => {
-            res.status(404).json({
-                message: "Not found, propertie does not exist",
-            });
+    const propertie = await PropertieModel.findById(propertieId);
+    if (propertie === null) {
+        res.status(404).json({
+            message: "Not found, propertie does not exist",
         });
+        return;
+    }
+
+    try {
+        const rules = await KindRulesModel.find({
+            kind: propertie?.kind,
+        });
+        res.status(200).json(rules);
+    } catch (error) {
+        res.status(500).json({
+            message: "Propertie have not kind rules associated",
+        });
+    }
 };
 /**
  * @swagger

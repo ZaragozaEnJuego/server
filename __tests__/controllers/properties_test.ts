@@ -3,6 +3,7 @@ import PropertieModel from "../../api/models/properties"; // importa tu modelo d
 import {
     getPropertie,
     getPropertieList,
+    getPropertieRules,
 } from "../../api/controllers/properties";
 import WeatherDataModel from "../../api/models/stats";
 import KindRulesModel from "../../api/models/kindRules";
@@ -168,5 +169,93 @@ describe("getPropertie", () => {
         expect(res.json).toHaveBeenCalledWith({
             msg: "Propertie does not exist",
         });
+    });
+});
+
+describe("getPropertieRules function", () => {
+    test("should return 404 if propertieId is not provided", async () => {
+        await getPropertieRules(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(404);
+        expect(res.json).toHaveBeenCalledWith({
+            message: "Not found, propertie id is required",
+        });
+    });
+
+    test("should return 404 if propertie does not exist", async () => {
+        const propertieId = "642ffe7b687431a7aad27610";
+        req.params = { id: propertieId };
+
+        jest.spyOn(PropertieModel, "findById").mockResolvedValueOnce(null);
+
+        await getPropertieRules(req, res);
+
+        expect(PropertieModel.findById).toHaveBeenCalledWith(propertieId);
+        expect(res.status).toHaveBeenCalledWith(404);
+        expect(res.json).toHaveBeenCalledWith({
+            message: "Not found, propertie does not exist",
+        });
+    });
+
+    test("should return 500 if propertie have not kind rules associated", async () => {
+        const propertieId = "642ffe7b687431a7aad27610";
+        const propertie = {
+            _id: propertieId,
+            name: "Bonaparte",
+            kind: "groceries",
+            lng: -0.8881719,
+            lat: 41.6427539,
+            price: 125355,
+            address: "Avenida Francisco de Goya, 17",
+            income: 1611,
+            owner: "Pepe",
+        };
+
+        req.params = { id: propertieId };
+
+        jest.spyOn(PropertieModel, "findById").mockResolvedValueOnce(propertie);
+        jest.spyOn(KindRulesModel, "find").mockRejectedValueOnce({});
+
+        await getPropertieRules(req, res);
+
+        expect(PropertieModel.findById).toHaveBeenCalledWith(propertieId);
+        expect(KindRulesModel.find).toHaveBeenCalledWith({
+            kind: propertie.kind,
+        });
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith({
+            message: "Propertie have not kind rules associated",
+        });
+    });
+
+    test("should return kind rules associated to the propertie", async () => {
+        const propertieId = "642ffe7b687431a7aad27610";
+        const propertie = {
+            _id: propertieId,
+            name: "Bonaparte",
+            kind: "groceries",
+            lng: -0.8881719,
+            lat: 41.6427539,
+            price: 125355,
+            address: "Avenida Francisco de Goya, 17",
+            income: 1611,
+            owner: "Pepe",
+        };
+        const kindRules = [
+            { kind: "groceries", Weather: { sunny: 0.1 } },
+            { kind: "transport", Weather: { cloudy: 0.2 } },
+        ];
+        req.params = { id: propertieId };
+        jest.spyOn(PropertieModel, "findById").mockResolvedValueOnce(propertie);
+        jest.spyOn(KindRulesModel, "find").mockResolvedValueOnce(kindRules);
+
+        await getPropertieRules(req, res);
+
+        expect(PropertieModel.findById).toHaveBeenCalledWith(propertieId);
+        expect(KindRulesModel.find).toHaveBeenCalledWith({
+            kind: propertie.kind,
+        });
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith(kindRules);
     });
 });
