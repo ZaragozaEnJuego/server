@@ -3,6 +3,7 @@ import WeatherDataModel from "../models/stats";
 import KindRulesModel from "../models/kindRules";
 import mongoose from "mongoose";
 import PropertieModel from "../models/properties";
+import UserModel from "../models/users";
 
 /**
  * @swagger
@@ -400,24 +401,33 @@ const propertieBuy = async (req: Request, res: Response) => {
     }
 
     // Iniciar una nueva sesión de MongoDB para garantizar atomicidad en todas las consultas
-    const session = await mongoose.startSession();
 
     //validate newOwner
 
     try {
-        await session.withTransaction(async () => {
-            const updatedPropertie = await PropertieModel.findByIdAndUpdate(
-                propertieId,
-                { owner: body.ownerId },
-                { new: true }
-            );
-            res.status(201).json(updatedPropertie);
-        });
+        const landlord = await UserModel.findById(body.ownerId);
+
+        if (landlord === null) {
+            res.status(400).json({ msg: "Wrong landlord Id" });
+            return;
+        }
+        const propertie = await PropertieModel.findById(propertieId);
+        if (propertie === null) {
+            res.status(404).json({ msg: "Wrong propertie Id" });
+            return;
+        }
+        if (landlord.liquidity < propertie.price) {
+            res.status(400).json({ msg: "Not enought money" });
+            return;
+        }
+        const updatedPropertie = await PropertieModel.findByIdAndUpdate(
+            propertieId,
+            { owner: body.ownerId },
+            { new: true }
+        );
+        res.status(201).json(updatedPropertie);
     } catch (error: any) {
         res.status(500).json({ msg: error.message });
-    } finally {
-        // Finalizar la sesión de MongoDB
-        session.endSession();
     }
 };
 

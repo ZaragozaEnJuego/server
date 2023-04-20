@@ -4,9 +4,12 @@ import {
     getPropertie,
     getPropertieList,
     getPropertieRules,
+    propertieBuy,
 } from "../../api/controllers/properties";
 import WeatherDataModel from "../../api/models/stats";
 import KindRulesModel from "../../api/models/kindRules";
+import UserModel from "../../api/models/users";
+import mongoose from "mongoose";
 
 jest.mock("../../api/models/properties"); // Mockeamos el modelo
 
@@ -257,5 +260,134 @@ describe("getPropertieRules function", () => {
         });
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.json).toHaveBeenCalledWith(kindRules);
+    });
+});
+
+describe("propertieBuy", () => {
+    // Mock data
+    const propertieId = "612f398eb657d971ec1771b1";
+    const ownerId = "612f3998b657d971ec1771b3";
+
+    it("should return 404 if no propertie id provided", async () => {
+        // Arrange
+        const req = { params: {}, body: { ownerId } } as Request;
+
+        req.params = {};
+        req.body = { ownerId };
+
+        // Act
+        await propertieBuy(req, res);
+
+        // Assert
+        expect(res.status).toHaveBeenCalledWith(404);
+        expect(res.json).toHaveBeenCalledWith({
+            message: "Not found, propertie id is required",
+        });
+    });
+
+    it("should return 400 if no owner id provided", async () => {
+        // Arrange
+
+        req.params = { id: propertieId };
+        req.body = {};
+
+        // Act
+        await propertieBuy(req, res);
+
+        // Assert
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({
+            message: "owner id is required",
+        });
+    });
+
+    it("should return 400 if landlord does not have enough money", async () => {
+        // Arrange
+        req.params = { id: propertieId };
+        req.body = { ownerId };
+        const propertie = {
+            _id: propertieId,
+            name: "Test propertie",
+            price: 50000,
+            owner: undefined,
+        };
+        const landlord = {
+            _id: ownerId,
+            name: "Test landlord",
+            liquidity: 40000,
+        };
+
+        jest.spyOn(UserModel, "findById").mockResolvedValue(landlord);
+        jest.spyOn(PropertieModel, "findById").mockResolvedValue(propertie);
+
+        // Act
+        await propertieBuy(req, res);
+
+        // Assert
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({
+            msg: "Not enought money",
+        });
+    });
+
+    it("should return 400 if owner id is invalid", async () => {
+        // Arrange
+        req.params = { id: propertieId };
+        req.body = { ownerId };
+        const propertie = {
+            _id: propertieId,
+            name: "Test propertie",
+            price: 50000,
+            owner: undefined,
+        };
+        const landlord = {
+            _id: ownerId,
+            name: "Test landlord",
+            liquidity: 40000,
+        };
+        jest.spyOn(UserModel, "findById").mockResolvedValue(null);
+        jest.spyOn(PropertieModel, "findById").mockResolvedValue(propertie);
+
+        // Act
+        await propertieBuy(req, res);
+
+        // Assert
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({
+            msg: "Wrong landlord Id",
+        });
+    });
+    it("should return updated propertie when transaction succeeds", async () => {
+        req.params = { id: propertieId };
+        req.body = { ownerId };
+        const propertie = {
+            _id: propertieId,
+            name: "Test propertie",
+            price: 50000,
+            owner: undefined,
+        };
+        const landlord = {
+            _id: ownerId,
+            name: "Test landlord",
+            liquidity: 60000,
+        };
+
+        jest.spyOn(UserModel, "findById").mockResolvedValueOnce(landlord);
+        jest.spyOn(PropertieModel, "findById").mockResolvedValueOnce(propertie);
+        jest.spyOn(PropertieModel, "findByIdAndUpdate").mockResolvedValueOnce({
+            ...propertie,
+            ownerId: landlord._id,
+        });
+
+        // Act
+        await propertieBuy(req, res);
+
+        // Assert
+        expect(res.status).toHaveBeenCalledWith(201);
+
+        expect(res.json).toHaveBeenCalledWith({
+            ...propertie,
+            ownerId: landlord._id,
+        });
     });
 });
