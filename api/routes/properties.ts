@@ -1,6 +1,5 @@
-import { Request, Response, Router } from "express";
+import { Router } from "express";
 import {
-    propertieCreate,
     getPropertieList,
     getPropertie,
     getPropertieRules,
@@ -14,8 +13,5 @@ router
     .get("/:id", getPropertie)
     .get("/:id/kindrules", getPropertieRules)
     .post("/:id/buy", propertieBuy);
-
-/**Test endpoints, do not use on production */
-router.post("/test/create", propertieCreate);
 
 export default router;
