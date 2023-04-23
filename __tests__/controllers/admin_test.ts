@@ -20,7 +20,8 @@ describe("getUserList", () => {
         const expectedData = [
             { id: 1, name: "User A"},
             { id: 2, name: "User B"},
-            { id: 3, name: "User C"}
+            { id: 3, name: "User C"},
+            { id: 4, name: "User D"}
         ]
         jest.mocked(UserModel.find).mockResolvedValueOnce(
             expectedData as any
@@ -40,5 +41,5 @@ describe("getUserList", () => {
 })
 
 describe("updateAccess", () => {
-    
+
 })

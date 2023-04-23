@@ -84,6 +84,7 @@ const getUserList = (req: Request, res: Response) => {
     .catch((err) => res.status(500).json(err));
 };
 
+// TODO: Documentación del método
 const updateAccess = (req: Request, res: Response) => {
   if (req.params.id === undefined) {
     res.status(400).json({
