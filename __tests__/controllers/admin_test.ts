@@ -41,5 +41,10 @@ describe("getUserList", () => {
 })
 
 describe("updateAccess", () => {
-
+    it("Should change user access attribute", async () => {
+        //TODO: Desarrollar esta prueba
+    })
+    it("Should change owner attribute for all user properties when blocked", async () => {
+        //TODO: Desarrollar esta prueba
+    })
 })
