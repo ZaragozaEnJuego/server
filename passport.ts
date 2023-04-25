@@ -23,7 +23,7 @@ passport.use(
           profile._json.name === undefined ? "" : profile._json.name;
         const email: string =
           profile._json.email === undefined ? "" : profile._json.email;
-        const user = findOrCreateUser(profile._json.sub, name, email, false);
+        const user = findOrCreateUser(name, email, false);
         return cb(null, user);
       } catch (err) {
         return cb(err);
