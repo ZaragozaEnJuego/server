@@ -2,12 +2,15 @@ import config from "./config";
 import { findOrCreateUser } from "./api/controllers/users";
 import passport from "passport";
 import GoogleStrategy from "passport-google-oauth20";
+import GitHubStrategy from "passport-github2";
+import DiscordStrategy from "passport-discord";
 
 passport.use(
   new GoogleStrategy.Strategy(
     {
-      clientID:
-        "162455912950-gvl6mce1fmkkc80a4g07ppi75maapmjn.apps.googleusercontent.com",
+      //clientID: config.google.clientID,
+      //clientSecret: config.google.clientSecret,
+      clientID:"162455912950-gvl6mce1fmkkc80a4g07ppi75maapmjn.apps.googleusercontent.com",
       clientSecret: "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",
       callbackURL: "http://localhost:3000/api/auth/google/callback",
     },
@@ -24,6 +27,67 @@ passport.use(
         const email: string =
           profile._json.email === undefined ? "" : profile._json.email;
         const user = findOrCreateUser(profile._json.sub, name, email, false);
+        return cb(null, user);
+      } catch (err) {
+        return cb(err);
+      }
+    }
+  )
+);
+
+passport.use(
+  new GitHubStrategy.Strategy(
+    {
+      //clientID: config.github.clientID,
+      //clientSecret: config.github.clientSecret,
+      clientID:"04d7dcb242b261509049",
+      clientSecret: "8369b5549a0c3a95ddde34d4591eba68d4a8e53d",
+      callbackURL: "http://localhost:3000/api/auth/github/callback",
+    },
+    function (
+      accessToken: string,
+      refreshToken: string,
+      profile: GitHubStrategy.Profile,
+      cb: any
+    ) {
+      try {
+        //checking values
+        const name: string =
+          profile._json.login === undefined ? "" : profile._json.login;
+        const email: string =
+          profile._json.login+"@github.com" === undefined ? "" : profile._json.login+"@github.com";
+        const user = findOrCreateUser(profile._json.sub, name, email, false);
+        return cb(null, user);
+      } catch (err) {
+        return cb(err);
+      }
+    }
+  )
+);
+
+passport.use(
+  new DiscordStrategy.Strategy(
+    {
+      //clientID: config.discord.clientID,
+      //clientSecret: config.discord.clientSecret,
+      clientID:"1100754605308121108",
+      clientSecret: "eRtaYsZkCBTT4Jp40THkzZZiu14e0731",
+      callbackURL: "http://localhost:3000/api/auth/discord/callback",
+      scope: ['identify', 'email'],
+    },
+    function (
+      accessToken: string,
+      refreshToken: string,
+      profile: DiscordStrategy.Profile,
+      cb: any
+    ) {
+      try {
+        //checking values
+        const name: string =
+          profile.username === undefined ? "" : profile.username;
+        const email: string =
+          profile.username+"@discord.com" === undefined ? "" : profile.username+"@discord.com";
+        const user = findOrCreateUser(profile.id, name, email, false);
         return cb(null, user);
       } catch (err) {
         return cb(err);
