@@ -38,8 +38,8 @@ const getAemetData = async (): Promise<{ tmax: number, tmin: number }> => {
   const dateStr = today.toISOString().slice(0, 10);
   
   /* Nos quedamos con la temperatura de las 12 */
-  const tmax = dataResponse.data.find((s: { fecha: string; }) => s.fecha === `${dateStr}T12:00:00`)?.tmax ?? 30;
-  const tmin = dataResponse.data.find((s: { fecha: string; }) => s.fecha === `${dateStr}T12:00:00`)?.tmin ?? 20;
+  const tmax = dataResponse.data.find((s: { fecha: string; }) => s.fecha === `${dateStr}T23:00:00`)?.tmax ?? 30;
+  const tmin = dataResponse.data.find((s: { fecha: string; }) => s.fecha === `${dateStr}T23:00:00`)?.tmin ?? 20;
  
   return { tmax, tmin };
 
@@ -84,11 +84,11 @@ const getSkyState = async (): Promise<String> => {
           periodo:string,
           descripcion:string,
         }[]
-      }
+      }[]
     }
   }
 
-  const dataResponse = await axios.get<ResponseWeather>(datos);
+  const dataResponse = await axios.get<ResponseWeather[]>(datos);
 
   /* Control de errores */
   if (dataResponse === undefined) {
@@ -96,8 +96,9 @@ const getSkyState = async (): Promise<String> => {
   }
       
   // Obtener la información del estado del cielo en el periodo de 12-24
-  const estadoCielo  = dataResponse.data.prediccion.dia.estadoCielo.find((s: { periodo: string; }) => s.periodo === "12-24")?.descripcion;
-
+  console.log(dataResponse.data[0].prediccion.dia[0].estadoCielo[0]);
+  const estadoCielo  = dataResponse.data[0].prediccion.dia[0].estadoCielo.find((s: { periodo: string; }) => s.periodo === "12-24")?.descripcion;
+  console.log(estadoCielo);
   switch (estadoCielo) {
     case "Despejado":
       return "sunny";
@@ -129,7 +130,7 @@ const setWeatherData = async () => {
   let { tmax, tmin } = await getAemetData();
 
   /* Calcular temperatura media */
-  const temperature = tmax + tmin / 2;
+  const temperature = (tmax + tmin) / 2;
 
   /* Obtener el precio de la luz */
   const electricityPrice = await getElectricityZaragozaPrice();
@@ -139,11 +140,16 @@ const setWeatherData = async () => {
 
   /* Introduzco la información a la base de datos */
 
+  console.log("LLego bien hasta aquí");
+  console.log(temperature);
+  console.log(skyState);
+  console.log(electricityPrice);
+
   const savedWeatherData = await WeatherDataModel.create({
-    fecha: new Date(), 
-    tmed: temperature, 
-    estadoCielo: skyState, 
-    electricidad: electricityPrice 
+    date: new Date(), 
+    temperature: temperature, 
+    state: skyState, 
+    electricity: electricityPrice 
   });
 };
 
