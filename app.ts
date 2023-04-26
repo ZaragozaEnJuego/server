@@ -78,7 +78,7 @@ app.use(
 - 5 -> Indica la hora (5 de la mañana)
 - * -> Todos los días del mes, todos los meses del año, cualquier día
 */
-cron.schedule("0 5 * * *", async () => {
+cron.schedule("15 * * * * *", async () => {
     try {
       await setWeatherData();
     } catch (error) {
