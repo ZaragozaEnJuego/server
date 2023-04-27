@@ -6,6 +6,7 @@ interface User {
   icon?: string;
   liquidity: number;
   mail: string;
+  created: Date;
   access: boolean;
   admin: boolean;
 }
@@ -14,6 +15,7 @@ const userSchema = new Schema<User>({
   name: { type: String, required: true },
   liquidity: { type: Number, required: true },
   mail: { type: String, required: true },
+  created: { type: Date, default: Date.now },
   admin: { type: Boolean, required: true },
 });
 
