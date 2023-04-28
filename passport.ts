@@ -11,14 +11,16 @@ passport.use(
             clientSecret: "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",
             callbackURL: "http://localhost:3000/api/auth/google/callback",
         },
-        function (
+        async function (
             accessToken: string,
             refreshToken: string,
             profile: GoogleStrategy.Profile,
             done: GoogleStrategy.VerifyCallback
         ) {
             //checking values
-
+            const name: string = profile._json.name === undefined ? "" : profile._json.name;
+            const email: string = profile._json.email === undefined ? "" : profile._json.email;
+            const user = await findOrCreateUser(profile._json.sub, name, email, false);
             return done(null, profile);
         }
     )

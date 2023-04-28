@@ -108,7 +108,7 @@ const findOrCreateUser = (
           console.log(`No se encontró ningún usuario con el correo ${mail}`);
           Users.create({
             name: name,
-            liquidez: 10000,
+            liquidity: 10000,
             mail: mail,
             admin: admin,
           })
