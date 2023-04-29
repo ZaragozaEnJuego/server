@@ -1,5 +1,6 @@
 import Users from "../models/users";
 import { Request, Response, response } from "express";
+import logger from "./logger";
 
 /**
  * @swagger
@@ -88,8 +89,14 @@ import { Request, Response, response } from "express";
  */
 const getUser = (req: Request, res: Response) => {
   Users.findById(req.params.id)
-    .then((user) => res.status(200).json(user))
-    .catch((err) => res.status(500).json(err));
+    .then((user) => {
+      res.status(200).json(user);
+      logger.info("usuario encontrado: " + req.params.id + "/" + user);
+    })
+    .catch((err) => {
+      res.status(500).json(err);
+      logger.error("usuario no encontrado: " + req.params.id);
+    });
 };
 
 const findOrCreateUser = (
@@ -103,9 +110,8 @@ const findOrCreateUser = (
       .then((user) => {
         if (user) {
           resolve(user);
-          console.log(`El usuario encontrado es: ${user}`);
+          logger.info("usuario encontrado: " + mail + "/" + user);
         } else {
-          console.log(`No se encontró ningún usuario con el correo ${mail}`);
           Users.create({
             name: name,
             liquidez: 10000,
@@ -113,15 +119,19 @@ const findOrCreateUser = (
             admin: admin,
           })
             .then((newUser) => {
-              console.log("Creado correctamente.");
+              logger.info("Usuario creado: " + user);
               resolve(newUser);
             })
             .catch((err) => {
+              logger.error("err: " + err);
               reject(err);
             });
         }
       })
-      .catch((err) => reject(err));
+      .catch((err) => {
+        reject(err);
+        logger.error("err: " + err);
+      });
   });
 };
 

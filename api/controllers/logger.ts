@@ -1,21 +1,22 @@
-const winston = require('winston');
-const { transports } = require('winston-daily-rotate-file');
+import winston from 'winston';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const DailyRotateFile = require('winston-daily-rotate-file');
 
-const infoTransport = new transports.DailyRotateFile({
-  filename: '../../logs/info-%DATE%.log',
+const infoTransport = new DailyRotateFile({
+  filename: './logs/info-%DATE%.log',
   datePattern: 'YYYY-ww',
   zippedArchive: true,
   maxSize: '20m',
-  maxFiles: '12w',
+  maxFiles: '4w',
   level: 'info'
 });
 
-const errorTransport = new transports.DailyRotateFile({
-  filename: '../../logs/error-%DATE%.log',
+const errorTransport = new DailyRotateFile({
+  filename: './logs/error-%DATE%.log',
   datePattern: 'YYYY-ww',
   zippedArchive: true,
   maxSize: '20m',
-  maxFiles: '12w',
+  maxFiles: '4w',
   level: 'error'
 });
 
@@ -25,4 +26,4 @@ const logger = winston.createLogger({
   transports: [infoTransport, errorTransport]
 });
 
-export { logger };
+export default logger;
