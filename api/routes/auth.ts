@@ -9,16 +9,28 @@ require("../../passport");
 const router = express.Router();
 
 router.get(
-    "/google",
-    passport.authenticate("google", { scope: ["profile", "email"] })
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
 router.get(
-    "/google/callback",
-    passport.authenticate("google", {
-        successRedirect: "http://localhost:5173/",
-        failureRedirect: "http://localhost:5173/",
-    })
+  "/google/callback",
+  passport.authenticate("google", {
+    successRedirect: "http://localhost:5173/",
+    failureRedirect: "http://localhost:5173/",
+  })
 );
 
+router.get(
+  "/google/login",
+  passport.authenticate("google", { failWithError: true }),
+  (req: any, res: any) => {
+    const token = jwt.sign({ mail: req.body.mail }, "cat", {
+      expiresIn: "14h",
+    });
+
+    //envio del JWT como respuesta al cliente
+    res.json({ token, isAdmin: false });
+  }
+);
 export default router;

@@ -14,33 +14,34 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const passport = require("passport");
 const session = require("express-session");
+const cors = require("cors");
 
 //Swagger
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
 const options = {
-    definition: {
-        openapi: "3.0.1",
-        info: {
-            title: "Zaragoza en juego",
-            version: "0.1.0",
-            description: "Jueguito divertido",
-            license: {
-                name: "MIT",
-                url: "https://spdx.org/licenses/MIT.html",
-            },
-        },
-        servers: [
-            {
-                url: "http://localhost:3000",
-            },
-            {
-                url: "http://localhost:3001",
-            },
-        ],
+  definition: {
+    openapi: "3.0.1",
+    info: {
+      title: "Zaragoza en juego",
+      version: "0.1.0",
+      description: "Jueguito divertido",
+      license: {
+        name: "MIT",
+        url: "https://spdx.org/licenses/MIT.html",
+      },
     },
-    apis: ["./api/controllers/*.ts", "./api/models/*.ts"],
+    servers: [
+      {
+        url: "http://localhost:3000",
+      },
+      {
+        url: "http://localhost:3001",
+      },
+    ],
+  },
+  apis: ["./api/controllers/*.ts", "./api/models/*.ts"],
 };
 
 const specs = swaggerJsdoc(options);
@@ -52,9 +53,9 @@ var app = express();
 app.disable("x-powered-by");
 
 app.use(
-    "/api-docs",
-    swaggerUi.serve,
-    swaggerUi.setup(specs, { explorer: true })
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(specs, { explorer: true })
 );
 
 app.use(logger("dev"));
@@ -64,11 +65,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(
-    session({
-        secret: "cat",
-        resave: false,
-        saveUninitialized: false,
-    })
+  session({
+    secret: "cat",
+    resave: false,
+    saveUninitialized: false,
+  })
 );
 
 app.use("/", indexRouter);
