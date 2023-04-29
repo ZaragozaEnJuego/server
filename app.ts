@@ -51,6 +51,12 @@ require("./api/models/db");
 
 var app = express();
 app.disable("x-powered-by");
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "http://localhost:5173"],
+    credentials: true, // habilita el envío de credenciales
+  })
+);
 
 app.use(
   "/api-docs",

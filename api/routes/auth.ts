@@ -21,16 +21,14 @@ router.get(
   })
 );
 
-router.get(
-  "/google/login",
-  passport.authenticate("google", { failWithError: true }),
-  (req: any, res: any) => {
-    const token = jwt.sign({ mail: req.body.mail }, "cat", {
-      expiresIn: "14h",
-    });
+router.get("/google/login", (req: any, res: any) => {
+  console.log(req.user);
 
-    //envio del JWT como respuesta al cliente
-    res.json({ token, isAdmin: false });
-  }
-);
+  const token = jwt.sign({ mail: req.body.mail }, "cat", {
+    expiresIn: "14h",
+  });
+
+  //envio del JWT como respuesta al cliente
+  res.json({ token, isAdmin: false });
+});
 export default router;
