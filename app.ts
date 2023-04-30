@@ -10,6 +10,7 @@ import middlewareAuth from "./api/controllers/middlewareAuth";
 
 var express = require("express");
 var path = require("path");
+const cors = require("cors");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const passport = require("passport");
@@ -20,27 +21,27 @@ const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
 const options = {
-    definition: {
-        openapi: "3.0.1",
-        info: {
-            title: "Zaragoza en juego",
-            version: "0.1.0",
-            description: "Jueguito divertido",
-            license: {
-                name: "MIT",
-                url: "https://spdx.org/licenses/MIT.html",
-            },
-        },
-        servers: [
-            {
-                url: "http://localhost:3000",
-            },
-            {
-                url: "http://localhost:3001",
-            },
-        ],
+  definition: {
+    openapi: "3.0.1",
+    info: {
+      title: "Zaragoza en juego",
+      version: "0.1.0",
+      description: "Jueguito divertido",
+      license: {
+        name: "MIT",
+        url: "https://spdx.org/licenses/MIT.html",
+      },
     },
-    apis: ["./api/controllers/*.ts", "./api/models/*.ts"],
+    servers: [
+      {
+        url: "http://localhost:3000",
+      },
+      {
+        url: "http://localhost:3001",
+      },
+    ],
+  },
+  apis: ["./api/controllers/*.ts", "./api/models/*.ts"],
 };
 
 const specs = swaggerJsdoc(options);
@@ -50,11 +51,22 @@ require("./api/models/db");
 
 var app = express();
 app.disable("x-powered-by");
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:5173",
+      "http://127.0.0.1:5173",
+      "http://127.0.0.1:3000",
+    ],
+    credentials: true, // habilita el envío de credenciales
+  })
+);
 
 app.use(
-    "/api-docs",
-    swaggerUi.serve,
-    swaggerUi.setup(specs, { explorer: true })
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(specs, { explorer: true })
 );
 
 app.use(logger("dev"));
@@ -64,11 +76,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(
-    session({
-        secret: "cat",
-        resave: false,
-        saveUninitialized: false,
-    })
+  session({
+    secret: "cat",
+    resave: false,
+    saveUninitialized: false,
+  })
 );
 
 app.use("/", indexRouter);
@@ -76,7 +88,7 @@ app.use("/", indexRouter);
 app.use(passport.authenticate("session"));
 app.use("/api/auth", authRouter);
 
-app.use(middlewareAuth);
+//app.use(middlewareAuth);
 
 app.use("/properties", propertiesRouter);
 app.use("/users", usersRouter);
