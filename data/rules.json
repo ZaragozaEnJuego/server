@@ -1,0 +1,70 @@
+[
+    {
+        "kind": "transport",
+        "MaxTemperature": {
+            "value": 30,
+            "modifier": 1.2
+        },
+        "MinTemperature": {
+            "value": -10,
+            "modifier": 0.8
+        },
+        "EnergyConsumption": 100,
+        "Weather": {
+            "sunny": 0.7,
+            "rainy": 0.1,
+            "cloudy": 0.2
+        }
+    },
+    {
+        "kind": "education",
+        "MaxTemperature": {
+            "value": 25,
+            "modifier": 1.1
+        },
+        "MinTemperature": {
+            "value": 5,
+            "modifier": 0.9
+        },
+        "EnergyConsumption": 80,
+        "Weather": {
+            "sunny": 0.5,
+            "rainy": 0.3,
+            "cloudy": 0.2
+        }
+    },
+    {
+        "kind": "health",
+        "MaxTemperature": {
+            "value": 20,
+            "modifier": 1.05
+        },
+        "MinTemperature": {
+            "value": 0,
+            "modifier": 0.95
+        },
+        "EnergyConsumption": 120,
+        "Weather": {
+            "sunny": 0.4,
+            "rainy": 0.4,
+            "cloudy": 0.2
+        }
+    },
+    {
+        "kind": "groceries",
+        "MaxTemperature": {
+            "value": 18,
+            "modifier": 1
+        },
+        "MinTemperature": {
+            "value": -5,
+            "modifier": 0.8
+        },
+        "EnergyConsumption": 90,
+        "Weather": {
+            "sunny": 0.3,
+            "rainy": 0.3,
+            "cloudy": 0.4
+        }
+    }
+]
