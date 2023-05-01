@@ -17,9 +17,9 @@ const getAemetData = async (): Promise<{ tmax: number, tmin: number }> => {
 
   /* Interface que para la función getAemetData */
   interface AemetResponse {
-      fecha: string;
-      tmax: number;
-      tmin: number;
+      fint: string;
+      tamin: number;
+      tamax: number;
   }
 
   /* El primer get tiene que conseguir los metadatos */
@@ -35,12 +35,13 @@ const getAemetData = async (): Promise<{ tmax: number, tmin: number }> => {
   }
 
   const today = new Date();
-  const dateStr = today.toISOString().slice(0, 10);
+  const yesterday = new Date(today.getTime() - 86400000);
+  const yesterdayStr = yesterday.toISOString().slice(0, 10);
   
-  /* Nos quedamos con la temperatura de las 12 */
-  const tmax = dataResponse.data.find((s: { fecha: string; }) => s.fecha === `${dateStr}T23:00:00`)?.tmax ?? 30;
-  const tmin = dataResponse.data.find((s: { fecha: string; }) => s.fecha === `${dateStr}T23:00:00`)?.tmin ?? 20;
- 
+  /* Nos quedamos con la temperatura de las 12:00 de ayer (normales) */
+  const tmax = dataResponse.data.find((s: { fint: string; }) => s.fint === `${yesterdayStr}T12:00:00`)?.tamax ?? 30;
+  const tmin = dataResponse.data.find((s: { fint: string; }) => s.fint === `${yesterdayStr}T12:00:00`)?.tamin ?? 20;
+
   return { tmax, tmin };
 
 }
@@ -57,12 +58,14 @@ const getElectricityZaragozaPrice = async (): Promise<number> => {
 
   // Se coge la información del precio de la luz
   const response = await axios.get<PriceResponse>(`${PRECIO_LUZ_API_URL}?zone=PCB`);
-  const price = response.data.price;
 
   /* Control de errores */
   if(response === undefined) {
-    const price = 100;
+      return 160;
   }
+  
+  // Precio de la luz
+  const price = response.data.price ?? 160;
 
   return price;
 };
@@ -96,9 +99,7 @@ const getSkyState = async (): Promise<String> => {
   }
       
   // Obtener la información del estado del cielo en el periodo de 12-24
-  console.log(dataResponse.data[0].prediccion.dia[0].estadoCielo[0]);
   const estadoCielo  = dataResponse.data[0].prediccion.dia[0].estadoCielo.find((s: { periodo: string; }) => s.periodo === "12-24")?.descripcion;
-  console.log(estadoCielo);
   switch (estadoCielo) {
     case "Despejado":
       return "sunny";
@@ -139,12 +140,6 @@ const setWeatherData = async () => {
   const skyState = await getSkyState();
 
   /* Introduzco la información a la base de datos */
-
-  console.log("LLego bien hasta aquí");
-  console.log(temperature);
-  console.log(skyState);
-  console.log(electricityPrice);
-
   const savedWeatherData = await WeatherDataModel.create({
     date: new Date(), 
     temperature: temperature, 
@@ -159,15 +154,20 @@ async function getWeatherData(req: Request, res: Response) {
   const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000); // Date last month
 
   // Realiza la consulta a la base de datos
+  // -1 indica orden descendente (más reciente a más antiguo)
+  // limit para limitar los resultados a 30
   const weatherData = await WeatherDataModel.find({
     date: { $gte: thirtyDaysAgo, $lte: today },
-  });
+  }).sort({date:-1}).limit(30);
+
+  // Control de errores
   if (weatherData === null) {
     res.status(500).json({ msg: "Internal error" });
     return;
   }
-
-  // Aquí falta la respuesta json
+  
+  // Objeto json
+  res.json(weatherData);
 }
 
 export { setWeatherData, getWeatherData };

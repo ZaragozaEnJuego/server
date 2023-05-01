@@ -1,9 +1,8 @@
-import { Router } from "express";
-import { getWeatherData, setWeatherData } from "../controllers/stats";
+import { Request, Response, Router } from "express";
+import { getWeatherData } from "../controllers/stats";
 
 const router = Router();
 
-/* Cambiar las rutas */
 router
     .get("/weather", getWeatherData)
 

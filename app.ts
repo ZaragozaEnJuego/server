@@ -3,6 +3,7 @@ import indexRouter from "./api/routes/index";
 import propertiesRouter from "./api/routes/properties";
 import usersRouter from "./api/routes/users";
 import authRouter from "./api/routes/auth";
+import weatherRouter from "./api/routes/stats";
 import middlewareAuth from "./api/controllers/middlewareAuth";
 import cron from "node-cron";
 import { setWeatherData } from "./api/controllers/stats";
@@ -78,7 +79,7 @@ app.use(
 - 5 -> Indica la hora (5 de la mañana)
 - * -> Todos los días del mes, todos los meses del año, cualquier día
 */
-cron.schedule("15 * * * * *", async () => {
+cron.schedule("0 5 * * *", async () => {
     try {
       await setWeatherData();
     } catch (error) {
