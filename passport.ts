@@ -17,13 +17,19 @@ passport.use(
             profile: GoogleStrategy.Profile,
             done: GoogleStrategy.VerifyCallback
         ) {
-            //checking values
-            const name: string =
-                profile._json.name === undefined ? "" : profile._json.name;
-            const email: string =
-                profile._json.email === undefined ? "" : profile._json.email;
-            await findOrCreateUser(profile._json.sub, name, email, false);
-            done(null, profile);
+            try {
+                //checking values
+                const name: string =
+                    profile._json.name === undefined ? "" : profile._json.name;
+                const email: string =
+                    profile._json.email === undefined
+                        ? ""
+                        : profile._json.email;
+                const user = findOrCreateUser(name, email, false);
+                return done(null, user);
+            } catch (err) {
+                return done(err);
+            }
         }
     )
 );

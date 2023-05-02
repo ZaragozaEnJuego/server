@@ -40,7 +40,7 @@ const options = {
                 url: "http://localhost:3001",
             },
             {
-               url: "https://server-production-29b0.up.railway.app",
+                url: "https://server-production-29b0.up.railway.app",
             },
         ],
     },
@@ -54,7 +54,30 @@ require("./api/models/db");
 
 var app = express();
 app.disable("x-powered-by");
-app.use("/api/auth/google/login", (req, res, next) => {
+
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Credentials", true);
+    res.header("Access-Control-Allow-Origin", req.headers.origin);
+    res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+    res.header(
+        "Access-Control-Allow-Headers",
+        "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept"
+    );
+    next();
+});
+/*
+app.use((req, res, next) => {
+    req.header("Access-Control-Allow-Credentials", true);
+    req.header("Access-Control-Allow-Origin", req.headers.origin);
+    req.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+    req.header(
+        "Access-Control-Allow-Headers",
+        "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept"
+    );
+    next();
+});*/
+
+/*app.use("/api/auth/google/login", (req, res, next) => {
     res.header("Access-Control-Allow-Origin", "http://localhost:3000");
     res.header(
         "Access-Control-Allow-Credentials: true",
@@ -72,7 +95,7 @@ app.use("/api/auth/google/login", (req, res, next) => {
         "Origin, X-Requested-With,Content-Type, Accept"
     );
     next();
-});
+});*/
 /*
 app.use(
     cors({
