@@ -38,6 +38,9 @@ const options = {
             {
                 url: "http://localhost:3001",
             },
+            {
+               url: "https://server-production-29b0.up.railway.app",
+            },
         ],
     },
     apis: ["./api/controllers/*.ts", "./api/models/*.ts"],
