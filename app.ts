@@ -54,7 +54,7 @@ require("./api/models/db");
 
 var app = express();
 app.disable("x-powered-by");
-
+/*
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Credentials", true);
     res.header("Access-Control-Allow-Origin", req.headers.origin);
@@ -65,7 +65,7 @@ app.use((req, res, next) => {
     );
     next();
 });
-/*
+
 app.use((req, res, next) => {
     req.header("Access-Control-Allow-Credentials", true);
     req.header("Access-Control-Allow-Origin", req.headers.origin);
