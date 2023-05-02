@@ -76,7 +76,7 @@ app.use("/", indexRouter);
 app.use(passport.authenticate("session"));
 app.use("/api/auth", authRouter);
 
-app.use(middlewareAuth);
+//app.use(middlewareAuth);
 
 app.use("/properties", propertiesRouter);
 app.use("/users", usersRouter);
