@@ -26,9 +26,9 @@ passport.use(
                         ? ""
                         : profile._json.email;
                 const user = findOrCreateUser(name, email, false);
-                return done(null, user);
+                done(null, user);
             } catch (err) {
-                done(err);
+                done(null, err);
             }
         }
     )
