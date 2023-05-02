@@ -432,6 +432,10 @@ const propertieBuy = async (req: Request, res: Response) => {
       res.status(404).json({ msg: "Wrong propertie Id" });
       return;
     }
+    if (propertie.owner !== undefined) {
+      res.status(400).json({ msg: "Propertie owned" });
+      return;
+    }
     if (landlord.liquidity < propertie.price) {
       res.status(400).json({ msg: "Not enought money" });
       return;
