@@ -9,6 +9,7 @@ import middlewareAuth from "./api/controllers/middlewareAuth";
 //https://dev.to/nathan_sheryak/how-to-test-a-typescript-express-api-with-jest-for-dummies-like-me-4epd
 
 var express = require("express");
+require("dotenv").config();
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
@@ -39,7 +40,7 @@ const options = {
                 url: "http://localhost:3001",
             },
             {
-               url: "https://server-production-29b0.up.railway.app",
+                url: "https://server-production-29b0.up.railway.app",
             },
         ],
     },
