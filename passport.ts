@@ -28,7 +28,7 @@ passport.use(
                 const user = findOrCreateUser(name, email, false);
                 done(null, user);
             } catch (err) {
-                done(err);
+                done(null, err);
             }
         }
     )
