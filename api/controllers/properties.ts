@@ -4,6 +4,7 @@ import KindRulesModel from "../models/kindRules";
 import mongoose from "mongoose";
 import PropertieModel from "../models/properties";
 import UserModel from "../models/users";
+import { log } from "console";
 
 /**
  * @swagger
@@ -109,10 +110,12 @@ const getPropertieList = async (req: Request, res: Response) => {
  *
  */
 const getPropertie = async (req: Request, res: Response) => {
-  if (req.params.id === undefined) {
+  const id = req.params.id;
+  if (id === undefined || !mongoose.isObjectIdOrHexString(id)) {
     res.status(400).json({ msg: "No id provided" });
     return;
   }
+
   const propertie = await PropertieModel.findById(req.params.id);
   if (propertie === null) {
     res.status(404).json({ msg: "Propertie does not exist" });
@@ -288,9 +291,11 @@ const getPropertieRules = async (req: Request, res: Response) => {
   }
 
   try {
-    const rules = await KindRulesModel.find({
+    const rules = await KindRulesModel.findOne({
       kind: propertie?.kind,
     });
+    console.log(rules);
+
     res.status(200).json(rules);
   } catch (error) {
     res.status(500).json({
