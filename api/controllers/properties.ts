@@ -121,6 +121,13 @@ const getPropertie = async (req: Request, res: Response) => {
     res.status(404).json({ msg: "Propertie does not exist" });
     return;
   }
+  let ownerName: string | undefined;
+  try {
+    const owner = await UserModel.findById(propertie.owner);
+    ownerName = owner?.name;
+  } catch (error) {
+    console.log("no hay user");
+  }
 
   const today = new Date(); // Get current date
   const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000); // Date last month
@@ -195,7 +202,7 @@ const getPropertie = async (req: Request, res: Response) => {
     address: propertie.address,
     price: propertie.price,
     baseIncome: propertie.baseIncome,
-    owner: propertie.owner,
+    owner: ownerName,
     kind: propertie.kind,
     stats: stats,
   });
@@ -432,7 +439,10 @@ const propertieBuy = async (req: Request, res: Response) => {
       { owner: body.ownerId },
       { new: true }
     );
-    res.status(201).json(updatedPropertie);
+    const newBalance = landlord.liquidity - propertie.price;
+
+    await UserModel.findByIdAndUpdate(body.ownerId, { liquidity: newBalance });
+    res.status(201).json({ id: updatedPropertie?._id });
   } catch (error: any) {
     res.status(500).json({ msg: error.message });
   }
