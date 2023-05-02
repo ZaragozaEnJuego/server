@@ -68,7 +68,7 @@ const getElectricityZaragozaPrice = async (): Promise<number> => {
   }
 };
 
-const getSkyState = async (): Promise<String> => {
+const getSkyState = async (): Promise<string> => {
 
   // Hacer una llamada a la API de AEMET para obtener la información meteorológica
   const response = await axios.get(`${AEMET_SKY_URL}/?api_key=${AEMET_API_KEY}`);
@@ -126,7 +126,7 @@ const getSkyState = async (): Promise<String> => {
 
 const setWeatherData = async () => {
   /* Obtener los valores de tmin y tmax de AEMET */
-  let { tmax, tmin } = await getAemetData();
+  const { tmax, tmin } = await getAemetData();
 
   /* Calcular temperatura media */
   const temperature = (tmax + tmin) / 2;
