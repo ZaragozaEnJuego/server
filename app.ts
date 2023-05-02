@@ -3,7 +3,6 @@ import indexRouter from "./api/routes/index";
 import propertiesRouter from "./api/routes/properties";
 import usersRouter from "./api/routes/users";
 import authRouter from "./api/routes/auth";
-import weatherRouter from "./api/routes/stats";
 import middlewareAuth from "./api/controllers/middlewareAuth";
 import cron from "node-cron";
 import { setWeatherData } from "./api/controllers/stats";
