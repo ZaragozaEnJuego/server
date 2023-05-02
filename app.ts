@@ -21,27 +21,27 @@ const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
 const options = {
-  definition: {
-    openapi: "3.0.1",
-    info: {
-      title: "Zaragoza en juego",
-      version: "0.1.0",
-      description: "Jueguito divertido",
-      license: {
-        name: "MIT",
-        url: "https://spdx.org/licenses/MIT.html",
-      },
+    definition: {
+        openapi: "3.0.1",
+        info: {
+            title: "Zaragoza en juego",
+            version: "0.1.0",
+            description: "Jueguito divertido",
+            license: {
+                name: "MIT",
+                url: "https://spdx.org/licenses/MIT.html",
+            },
+        },
+        servers: [
+            {
+                url: "http://localhost:3000",
+            },
+            {
+                url: "http://localhost:3001",
+            },
+        ],
     },
-    servers: [
-      {
-        url: "http://localhost:3000",
-      },
-      {
-        url: "http://localhost:3001",
-      },
-    ],
-  },
-  apis: ["./api/controllers/*.ts", "./api/models/*.ts"],
+    apis: ["./api/controllers/*.ts", "./api/models/*.ts"],
 };
 
 const specs = swaggerJsdoc(options);
@@ -51,17 +51,37 @@ require("./api/models/db");
 
 var app = express();
 app.disable("x-powered-by");
-app.use(
-  cors({
-    origin: ["http://localhost:3000", "http://localhost:5173"],
-    credentials: true, // habilita el envío de credenciales
-  })
-);
+app.use("/api/auth/google/login", (req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+    res.header(
+        "Access-Control-Allow-Credentials: true",
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With,Content-Type, Accept"
+    );
+    next();
+});
 
+app.use("/api/auth/google/login", (req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "http://localhost:5173");
+    res.header(
+        "Access-Control-Allow-Credentials: true",
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With,Content-Type, Accept"
+    );
+    next();
+});
+/*
 app.use(
-  "/api-docs",
-  swaggerUi.serve,
-  swaggerUi.setup(specs, { explorer: true })
+    cors({
+        origin: ["http://localhost:3000", "http://localhost:5173"],
+        credentials: true, // habilita el envío de credenciales
+    })
+);
+*/
+app.use(
+    "/api-docs",
+    swaggerUi.serve,
+    swaggerUi.setup(specs, { explorer: true })
 );
 
 app.use(logger("dev"));
@@ -71,11 +91,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(
-  session({
-    secret: "cat",
-    resave: false,
-    saveUninitialized: false,
-  })
+    session({
+        secret: "cat",
+        resave: false,
+        saveUninitialized: false,
+    })
 );
 
 app.use("/", indexRouter);
