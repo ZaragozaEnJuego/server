@@ -39,6 +39,9 @@ const options = {
             {
                 url: "http://localhost:3001",
             },
+            {
+               url: "https://server-production-29b0.up.railway.app",
+            },
         ],
     },
     apis: ["./api/controllers/*.ts", "./api/models/*.ts"],
@@ -103,7 +106,7 @@ app.use("/", indexRouter);
 app.use(passport.authenticate("session"));
 app.use("/api/auth", authRouter);
 
-app.use(middlewareAuth);
+//app.use(middlewareAuth);
 
 app.use("/properties", propertiesRouter);
 app.use("/users", usersRouter);
