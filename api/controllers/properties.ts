@@ -122,11 +122,13 @@ const getPropertie = async (req: Request, res: Response) => {
     return;
   }
   let ownerName: string | undefined;
-  try {
-    const owner = await UserModel.findById(propertie.owner);
-    ownerName = owner?.name;
-  } catch (error) {
-    console.log("no hay user");
+  if (propertie.owner !== undefined) {
+    try {
+      const owner = await UserModel.findById(propertie.owner);
+      ownerName = owner?.name;
+    } catch (error) {
+      console.log("no hay user");
+    }
   }
 
   const today = new Date(); // Get current date

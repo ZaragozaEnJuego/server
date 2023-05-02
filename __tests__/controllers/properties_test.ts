@@ -68,7 +68,6 @@ describe("getPropertie", () => {
       address: "Avenida Francisco de Goya, 17",
       price: 200000,
       baseIncome: 5000,
-      owner: "Pepe",
       kind: "groceries",
     };
 
@@ -140,7 +139,6 @@ describe("getPropertie", () => {
       address: expectedPropertie.address,
       price: expectedPropertie.price,
       baseIncome: expectedPropertie.baseIncome,
-      owner: expectedPropertie.owner,
       kind: expectedPropertie.kind,
       stats: expectedStats,
     });
@@ -217,14 +215,12 @@ describe("getPropertieRules function", () => {
     req.params = { id: propertieId };
 
     jest.spyOn(PropertieModel, "findById").mockResolvedValueOnce(propertie);
-    jest.spyOn(KindRulesModel, "find").mockRejectedValueOnce({});
+    jest.spyOn(KindRulesModel, "findOne").mockRejectedValueOnce({});
 
     await getPropertieRules(req, res);
 
     expect(PropertieModel.findById).toHaveBeenCalledWith(propertieId);
-    expect(KindRulesModel.find).toHaveBeenCalledWith({
-      kind: propertie.kind,
-    });
+
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({
       message: "Propertie have not kind rules associated",
@@ -250,16 +246,16 @@ describe("getPropertieRules function", () => {
     ];
     req.params = { id: propertieId };
     jest.spyOn(PropertieModel, "findById").mockResolvedValueOnce(propertie);
-    jest.spyOn(KindRulesModel, "find").mockResolvedValueOnce(kindRules);
+    jest.spyOn(KindRulesModel, "findOne").mockResolvedValueOnce(kindRules[0]);
 
     await getPropertieRules(req, res);
 
     expect(PropertieModel.findById).toHaveBeenCalledWith(propertieId);
-    expect(KindRulesModel.find).toHaveBeenCalledWith({
+    expect(KindRulesModel.findOne).toHaveBeenCalledWith({
       kind: propertie.kind,
     });
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith(kindRules);
+    expect(res.json).toHaveBeenCalledWith(kindRules[0]);
   });
 });
 
@@ -372,12 +368,21 @@ describe("propertieBuy", () => {
       liquidity: 60000,
     };
 
+    const landlordAfterTransaction = {
+      _id: ownerId,
+      name: landlord.name,
+      liquidity: landlord.liquidity - propertie.price,
+    };
+
     jest.spyOn(UserModel, "findById").mockResolvedValueOnce(landlord);
     jest.spyOn(PropertieModel, "findById").mockResolvedValueOnce(propertie);
     jest.spyOn(PropertieModel, "findByIdAndUpdate").mockResolvedValueOnce({
       ...propertie,
       ownerId: landlord._id,
     });
+    jest
+      .spyOn(UserModel, "findByIdAndUpdate")
+      .mockResolvedValueOnce(landlordAfterTransaction);
 
     // Act
     await propertieBuy(req, res);
@@ -386,8 +391,7 @@ describe("propertieBuy", () => {
     expect(res.status).toHaveBeenCalledWith(201);
 
     expect(res.json).toHaveBeenCalledWith({
-      ...propertie,
-      ownerId: landlord._id,
+      id: propertie._id,
     });
   });
 });
