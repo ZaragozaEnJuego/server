@@ -9,6 +9,7 @@ import middlewareAuth from "./api/controllers/middlewareAuth";
 //https://dev.to/nathan_sheryak/how-to-test-a-typescript-express-api-with-jest-for-dummies-like-me-4epd
 
 var express = require("express");
+require("dotenv").config();
 var path = require("path");
 const cors = require("cors");
 var cookieParser = require("cookie-parser");
@@ -16,32 +17,32 @@ var logger = require("morgan");
 const passport = require("passport");
 const session = require("express-session");
 
+
+const serverUrl = process.env.SERVER_URL ?? "http://localhost:3000";
+
 //Swagger
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
 const options = {
-  definition: {
-    openapi: "3.0.1",
-    info: {
-      title: "Zaragoza en juego",
-      version: "0.1.0",
-      description: "Jueguito divertido",
-      license: {
-        name: "MIT",
-        url: "https://spdx.org/licenses/MIT.html",
-      },
+    definition: {
+        openapi: "3.0.1",
+        info: {
+            title: "Zaragoza en juego",
+            version: "0.1.0",
+            description: "Jueguito divertido",
+            license: {
+                name: "MIT",
+                url: "https://spdx.org/licenses/MIT.html",
+            },
+        },
+        servers: [
+            {
+                url: serverUrl,
+            },
+        ],
     },
-    servers: [
-      {
-        url: "http://localhost:3000",
-      },
-      {
-        url: "http://localhost:3001",
-      },
-    ],
-  },
-  apis: ["./api/controllers/*.ts", "./api/models/*.ts"],
+    apis: ["./api/controllers/*.ts", "./api/models/*.ts"],
 };
 
 const specs = swaggerJsdoc(options);
@@ -88,7 +89,9 @@ app.use("/", indexRouter);
 app.use(passport.authenticate("session"));
 app.use("/api/auth", authRouter);
 
-//app.use(middlewareAuth);
+if (process.env.NODE_ENV === "production") {
+    app.use(middlewareAuth);
+}
 
 app.use("/properties", propertiesRouter);
 app.use("/users", usersRouter);
