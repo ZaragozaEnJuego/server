@@ -22,11 +22,11 @@ beforeEach(() => {
 describe("getUser", () => {
     it("should return the user when a valid id is provided", async () => {
         // Define el objeto Request con un id válido
-        req.params = { id: "6446b7e5415c3073bd604f02" };
+        req.params = { id: "64491e5e1a6d5628669856c7" };
 
         const expectedUser = {
             name: "Ismael Penacho",
-            _id: "6446b7e5415c3073bd604f02",
+            _id: "64491e5e1a6d5628669856c7",
             liquidity: 10000,
             mail: "774572@unizar.es",
             admin: false,
@@ -117,7 +117,7 @@ describe("findOrCreateUser", () => {
 
     it("should create a new user and resolve with the new user object", async () => {
         const newUser = new UserModel({
-            _id: "6446b7e5415c3073bd604f01",
+            _id: "64491e5e1a6d5628669856c3",
             name: "pruebaTest",
             liquidity: 1000,
             mail: "pruebaTest@unizar.es",
