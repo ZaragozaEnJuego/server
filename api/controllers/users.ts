@@ -1,6 +1,5 @@
 import UserModel from "../models/users";
-import { Request, Response, response } from "express";
-import logger from "./logger";
+import { Request, Response } from "express";
 
 /**
  * @swagger
@@ -87,16 +86,17 @@ import logger from "./logger";
  *         description: Some server error
  *
  */
-const getUser = (req: Request, res: Response) => {
-  UserModel.findById(req.params.id)
-    .then((user) => {
-      res.status(200).json(user);
-      logger.info("usuario encontrado: " + req.params.id + "/" + user);
-    })
-    .catch((err) => {
-      res.status(500).json(err);
-      logger.error("usuario no encontrado: " + req.params.id);
-    });
+const getUser = async (req: Request, res: Response) => {
+  if (req.params.id === undefined) {
+    res.status(400).json({ msg: "No id provided" });
+    return;
+  }
+  const user = await UserModel.findById(req.params.id);
+  if (user === null) {
+      res.status(404).json({ msg: "User does not exist" });
+      return;
+  }
+  res.status(200).json(user);
 };
 
 const findOrCreateUser = (
@@ -109,8 +109,9 @@ const findOrCreateUser = (
       .then((user) => {
         if (user) {
           resolve(user);
-          logger.info("usuario encontrado: " + mail + "/" + user);
+          //console.log(`El usuario encontrado es: ${user}`);
         } else {
+          //console.log(`No se encontró ningún usuario con el correo ${mail}`);
           UserModel.create({
             name: name,
             liquidity: 10000,
@@ -118,19 +119,15 @@ const findOrCreateUser = (
             admin: admin,
           })
             .then((newUser) => {
-              logger.info("Usuario creado: " + user);
+              //console.log(`Creado correctamente. ${newUser}`);
               resolve(newUser);
             })
             .catch((err) => {
-              logger.error("err: " + err);
               reject(err);
             });
         }
       })
-      .catch((err) => {
-        reject(err);
-        logger.error("err: " + err);
-      });
+      .catch((err) => reject(err));
   });
 };
 
