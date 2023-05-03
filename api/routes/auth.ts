@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken";
 require("../../passport");
 
 const router = express.Router();
+const clientUrl = process.env.CLIENT_URL ?? "http://localhost:5173";
 
 router.get(
     "/google",
@@ -16,8 +17,9 @@ router.get(
 router.get(
     "/google/callback",
     passport.authenticate("google", {
-        successRedirect: "https://client-hqzg5w9fc-785370-unizares.vercel.app",
-        failureRedirect: "https://client-hqzg5w9fc-785370-unizares.vercel.app",
+        successRedirect: clientUrl,
+        failureRedirect: clientUrl,
+
     })
 );
 
@@ -26,7 +28,7 @@ router.get(
     passport.authenticate(
         "google",
         {
-            failureRedirect: "http://localhost:5173/",
+            failureRedirect: clientUrl,
         },
         (req: any, res: any) => {
             console.log(req.user);
@@ -34,6 +36,7 @@ router.get(
             const token = jwt.sign({ mail: req.body.mail }, "cat", {
                 expiresIn: "14h",
             });
+
 
             //envio del JWT como respuesta al cliente
             res.json({ token, isAdmin: false });
