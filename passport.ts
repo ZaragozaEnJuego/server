@@ -3,13 +3,14 @@ import { findOrCreateUser } from "./api/controllers/users";
 import passport from "passport";
 import GoogleStrategy from "passport-google-oauth20";
 
+const serverUrl = process.env.SERVER_URL ?? "http://localhost:3000";
 passport.use(
     new GoogleStrategy.Strategy(
         {
             clientID:
                 "162455912950-gvl6mce1fmkkc80a4g07ppi75maapmjn.apps.googleusercontent.com",
             clientSecret: "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",
-            callbackURL: "http://localhost:3000/api/auth/google/callback",
+            callbackURL: serverUrl + "/api/auth/google/callback",
         },
         async function (
             accessToken: string,
@@ -28,10 +29,7 @@ passport.use(
                 const user = findOrCreateUser(name, email, false);
                 done(null, user);
             } catch (err) {
-              
-                    done(err as Error);
-                
-                
+                done(err as Error);
             }
         }
     )
