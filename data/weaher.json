@@ -1,0 +1,26 @@
+[
+    {
+        "date": "2023-04-30T00:00:00.000Z",
+        "temperature": 20,
+        "state": "sunny",
+        "electricity": 100
+    },
+    {
+        "date": "2023-04-29T00:00:00.000Z",
+        "temperature": 18,
+        "state": "cloudy",
+        "electricity": 95
+    },
+    {
+        "date": "2023-04-28T00:00:00.000Z",
+        "temperature": 15,
+        "state": "rainy",
+        "electricity": 80
+    },
+    {
+        "date": "2023-04-27T00:00:00.000Z",
+        "temperature": 13,
+        "state": "cloudy",
+        "electricity": 75
+    }
+]

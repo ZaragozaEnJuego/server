@@ -10,6 +10,7 @@
         "test": "jest --coverage"
     },
     "dependencies": {
+        "@types/cors": "^2.8.13",
         "@types/jsonwebtoken": "^9.0.1",
         "@types/mongoose": "^5.11.97",
         "@types/passport": "^1.0.12",

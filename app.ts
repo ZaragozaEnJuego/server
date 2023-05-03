@@ -11,11 +11,12 @@ import middlewareAuth from "./api/controllers/middlewareAuth";
 var express = require("express");
 require("dotenv").config();
 var path = require("path");
+const cors = require("cors");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const passport = require("passport");
 const session = require("express-session");
-const cors = require("cors");
+
 
 const serverUrl = process.env.SERVER_URL ?? "http://localhost:3000";
 
@@ -51,11 +52,22 @@ require("./api/models/db");
 
 var app = express();
 app.disable("x-powered-by");
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:5173",
+      "http://127.0.0.1:5173",
+      "http://127.0.0.1:3000",
+    ],
+    credentials: true, // habilita el envío de credenciales
+  })
+);
 
 app.use(
-    "/api-docs",
-    swaggerUi.serve,
-    swaggerUi.setup(specs, { explorer: true })
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(specs, { explorer: true })
 );
 
 app.use(logger("dev"));
@@ -65,11 +77,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(
-    session({
-        secret: "cat",
-        resave: false,
-        saveUninitialized: false,
-    })
+  session({
+    secret: "cat",
+    resave: false,
+    saveUninitialized: false,
+  })
 );
 
 app.use("/", indexRouter);
