@@ -79,7 +79,9 @@ app.use("/", indexRouter);
 app.use(passport.authenticate("session"));
 app.use("/api/auth", authRouter);
 
-//app.use(middlewareAuth);
+if (process.env.NODE_ENV === "production") {
+    app.use(middlewareAuth);
+}
 
 app.use("/properties", propertiesRouter);
 app.use("/users", usersRouter);
