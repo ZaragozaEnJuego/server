@@ -1,4 +1,4 @@
-import Users from "../models/users";
+import UserModel from "../models/users";
 import { Request, Response, response } from "express";
 import logger from "./logger";
 
@@ -62,7 +62,7 @@ import logger from "./logger";
  *                            income:
  *                            type: number
  *                            description: The income of the stats
- *                   liquidez:
+ *                   liquidity:
  *                     type: number
  *                   mail:
  *                     type: string
@@ -88,7 +88,7 @@ import logger from "./logger";
  *
  */
 const getUser = (req: Request, res: Response) => {
-  Users.findById(req.params.id)
+  UserModel.findById(req.params.id)
     .then((user) => {
       res.status(200).json(user);
       logger.info("usuario encontrado: " + req.params.id + "/" + user);
@@ -100,21 +100,20 @@ const getUser = (req: Request, res: Response) => {
 };
 
 const findOrCreateUser = (
-  id: string,
   name: string,
   mail: string,
   admin: boolean
 ) => {
   return new Promise((resolve, reject) => {
-    Users.findOne({ mail: mail })
+    UserModel.findOne({ mail: mail })
       .then((user) => {
         if (user) {
           resolve(user);
           logger.info("usuario encontrado: " + mail + "/" + user);
         } else {
-          Users.create({
+          UserModel.create({
             name: name,
-            liquidez: 10000,
+            liquidity: 10000,
             mail: mail,
             admin: admin,
           })
