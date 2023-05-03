@@ -9,11 +9,13 @@ import middlewareAuth from "./api/controllers/middlewareAuth";
 //https://dev.to/nathan_sheryak/how-to-test-a-typescript-express-api-with-jest-for-dummies-like-me-4epd
 
 var express = require("express");
+require("dotenv").config();
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const passport = require("passport");
 const session = require("express-session");
+const cors = require("cors");
 
 //Swagger
 const swaggerJsdoc = require("swagger-jsdoc");
@@ -53,7 +55,56 @@ require("./api/models/db");
 
 var app = express();
 app.disable("x-powered-by");
+/*
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Credentials", true);
+    res.header("Access-Control-Allow-Origin", req.headers.origin);
+    res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+    res.header(
+        "Access-Control-Allow-Headers",
+        "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept"
+    );
+    next();
+});
 
+app.use((req, res, next) => {
+    req.header("Access-Control-Allow-Credentials", true);
+    req.header("Access-Control-Allow-Origin", req.headers.origin);
+    req.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+    req.header(
+        "Access-Control-Allow-Headers",
+        "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept"
+    );
+    next();
+});*/
+
+/*app.use("/api/auth/google/login", (req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+    res.header(
+        "Access-Control-Allow-Credentials: true",
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With,Content-Type, Accept"
+    );
+    next();
+});
+
+app.use("/api/auth/google/login", (req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "http://localhost:5173");
+    res.header(
+        "Access-Control-Allow-Credentials: true",
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With,Content-Type, Accept"
+    );
+    next();
+});*/
+/*
+app.use(
+    cors({
+        origin: ["http://localhost:3000", "http://localhost:5173"],
+        credentials: true, // habilita el envío de credenciales
+    })
+);
+*/
 app.use(
     "/api-docs",
     swaggerUi.serve,
