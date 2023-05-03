@@ -19,6 +19,7 @@ router.get(
     passport.authenticate("google", {
         successRedirect: clientUrl,
         failureRedirect: clientUrl,
+
     })
 );
 
@@ -35,6 +36,7 @@ router.get(
             const token = jwt.sign({ mail: req.body.mail }, "cat", {
                 expiresIn: "14h",
             });
+
 
             //envio del JWT como respuesta al cliente
             res.json({ token, isAdmin: false });

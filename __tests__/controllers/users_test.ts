@@ -134,4 +134,3 @@ describe("findOrCreateUser", () => {
       expect(UserModel.create).toHaveBeenCalledTimes(1);
     });
 });
-     
