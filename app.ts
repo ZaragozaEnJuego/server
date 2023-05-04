@@ -49,9 +49,10 @@ const specs = swaggerJsdoc(options);
 
 //Mongoose
 require("./api/models/db");
-
+const cors = require('cors');
 var app = express();
 app.disable("x-powered-by");
+app.use(cors());
 
 
 app.use(
