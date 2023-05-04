@@ -17,14 +17,15 @@ router.get(
 router.get(
     '/google/callback',
     passport.authenticate('google', { failureRedirect: '/login' }),
-    (req: any, res: any) => {
+    (req: Request, res: Response) => {
       const token = jwt.sign(
         { user: req.body.user },
         'cat',
         { expiresIn: '14h' }
       );
       //envio del JWT como respuesta al cliente
-      res.json({ token });
+      //res.redirect(`${clientUrl}?token=${token}`)
+      res.redirect(`${clientUrl}`) ;
     }
   );
 
