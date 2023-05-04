@@ -45,7 +45,7 @@ import { Request, Response } from "express";
  *                         type: string
  *                       price:
  *                         type: number
- *                       income:
+ *                       baseIncome:
  *                         type: number
  *                       owner:
  *                         type: string
@@ -58,7 +58,7 @@ import { Request, Response } from "express";
  *                              type: string
  *                              format: date-time
  *                              description: The date of the stats
- *                            income:
+ *                            baseIncome:
  *                            type: number
  *                            description: The income of the stats
  *                   liquidity:
@@ -76,9 +76,9 @@ import { Request, Response } from "express";
  *                       type: string
  *                       format: date-time
  *                       description: The date of the stats
- *                     income:
+ *                     baseIncome:
  *                       type: number
- *                       description: The income of the stats
+ *                       description: The baseIncome of the stats
  *
  *       404:
  *         description: The user does not exis
