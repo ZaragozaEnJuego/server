@@ -1,5 +1,6 @@
 import { Response, Request } from "express";
 import config from "../../config";
+import { getId } from "../controllers/users";
 
 import express from "express";
 import passport from "passport";
@@ -20,13 +21,14 @@ router.get(
     passport.authenticate('google', { failureRedirect: '/login' }),
     (req: Request, res: Response) => {
       const token = jwt.sign(
-        { user: req.body.user },
+        { mail: req.body.mail },
         'cat',
         { expiresIn: '14h' }
       );
+      const userId = getId(req.body.mail);
       //envio del JWT como respuesta al cliente
       //res.redirect(`${clientUrl}?token=${token}`)
-      res.redirect(`${clientUrl}?token=${token}`) ;
+      res.redirect(`${clientUrl}?token=${token}&id=${userId}&admin=false`) ;
     }
   );
 
@@ -39,15 +41,16 @@ router.get(
 router.get(
   "/github/callback",
   passport.authenticate("github", { failureRedirect: '/api/auth/github' }),
-  (req: any, res: any) => {
+  (req: Request, res: Response) => {
     const token = jwt.sign(
       { mail: req.body.mail },
       'cat',
       { expiresIn: '14h' }
     );
-
+    const userId = getId(req.body.mail);
     //envio del JWT como respuesta al cliente
-    res.json({ token, isAdmin: false });
+    //res.redirect(`${clientUrl}?token=${token}`)
+    res.redirect(`${clientUrl}?token=${token}&id=${userId}&admin=false`) ;
   }
 );
 
@@ -60,15 +63,16 @@ router.get(
 router.get(
   "/discord/callback",
   passport.authenticate("discord", { failureRedirect: '/api/auth/discord' }),
-  (req: any, res: any) => {
+  (req: Request, res: Response) => {
     const token = jwt.sign(
       { mail: req.body.mail },
       'cat',
       { expiresIn: '14h' }
     );
-
+    const userId = getId(req.body.mail);
     //envio del JWT como respuesta al cliente
-    res.json({ token, isAdmin: false });
+    //res.redirect(`${clientUrl}?token=${token}`)
+    res.redirect(`${clientUrl}?token=${token}&id=${userId}&admin=false`) ;
   }
 );
 
