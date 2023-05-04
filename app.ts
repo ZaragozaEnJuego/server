@@ -51,19 +51,11 @@ const specs = swaggerJsdoc(options);
 
 //Mongoose
 require("./api/models/db");
-
+const cors = require('cors');
 var app = express();
 app.disable("x-powered-by");
-app.use((req:Request, res:Response, next: NextFunction) => {
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header("Access-Control-Allow-Origin", req.headers.origins);
-  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
-  res.header(
-      "Access-Control-Allow-Headers",
-      "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept"
-  );
-  next();
-});
+app.use(cors());
+
 
 app.use(
   "/api-docs",
