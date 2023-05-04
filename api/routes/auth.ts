@@ -27,7 +27,7 @@ router.get(
         });
 
         //envio del JWT como respuesta al cliente
-        res.redirect(  `clientUrl?token=token&isAdmin=false`);
+        res.redirect(  `${clientUrl}?token=token&isAdmin=false`);
     })
 );
 
