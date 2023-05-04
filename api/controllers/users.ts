@@ -1,5 +1,5 @@
-import Users from "../models/users";
-import { Request, Response, response } from "express";
+import UserModel from "../models/users";
+import { Request, Response } from "express";
 
 /**
  * @swagger
@@ -45,7 +45,7 @@ import { Request, Response, response } from "express";
  *                         type: string
  *                       price:
  *                         type: number
- *                       income:
+ *                       baseIncome:
  *                         type: number
  *                       owner:
  *                         type: string
@@ -58,10 +58,10 @@ import { Request, Response, response } from "express";
  *                              type: string
  *                              format: date-time
  *                              description: The date of the stats
- *                            income:
+ *                            baseIncome:
  *                            type: number
  *                            description: The income of the stats
- *                   liquidez:
+ *                   liquidity:
  *                     type: number
  *                   mail:
  *                     type: string
@@ -76,9 +76,9 @@ import { Request, Response, response } from "express";
  *                       type: string
  *                       format: date-time
  *                       description: The date of the stats
- *                     income:
+ *                     baseIncome:
  *                       type: number
- *                       description: The income of the stats
+ *                       description: The baseIncome of the stats
  *
  *       404:
  *         description: The user does not exis
@@ -86,34 +86,40 @@ import { Request, Response, response } from "express";
  *         description: Some server error
  *
  */
-const getUser = (req: Request, res: Response) => {
-  Users.findById(req.params.id)
-    .then((user) => res.status(200).json(user))
-    .catch((err) => res.status(500).json(err));
+const getUser = async (req: Request, res: Response) => {
+  if (req.params.id === undefined) {
+    res.status(400).json({ msg: "No id provided" });
+    return;
+  }
+  const user = await UserModel.findById(req.params.id);
+  if (user === null) {
+      res.status(404).json({ msg: "User does not exist" });
+      return;
+  }
+  res.status(200).json(user);
 };
 
 const findOrCreateUser = (
-  id: string,
   name: string,
   mail: string,
   admin: boolean
 ) => {
   return new Promise((resolve, reject) => {
-    Users.findOne({ mail: mail })
+    UserModel.findOne({ mail: mail })
       .then((user) => {
         if (user) {
           resolve(user);
-          console.log(`El usuario encontrado es: ${user}`);
+          //console.log(`El usuario encontrado es: ${user}`);
         } else {
-          console.log(`No se encontró ningún usuario con el correo ${mail}`);
-          Users.create({
+          //console.log(`No se encontró ningún usuario con el correo ${mail}`);
+          UserModel.create({
             name: name,
             liquidity: 10000,
             mail: mail,
             admin: admin,
           })
             .then((newUser) => {
-              console.log("Creado correctamente.");
+              //console.log(`Creado correctamente. ${newUser}`);
               resolve(newUser);
             })
             .catch((err) => {

@@ -4,16 +4,21 @@ import propertiesRouter from "./api/routes/properties";
 import usersRouter from "./api/routes/users";
 import authRouter from "./api/routes/auth";
 import middlewareAuth from "./api/controllers/middlewareAuth";
+import { Request,Response ,NextFunction} from "express";
 
 //FOR TESTING LOOK
 //https://dev.to/nathan_sheryak/how-to-test-a-typescript-express-api-with-jest-for-dummies-like-me-4epd
 
 var express = require("express");
+require("dotenv").config();
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const passport = require("passport");
 const session = require("express-session");
+
+
+const serverUrl = process.env.SERVER_URL ?? "http://localhost:3000";
 
 //Swagger
 const swaggerJsdoc = require("swagger-jsdoc");
@@ -33,10 +38,7 @@ const options = {
         },
         servers: [
             {
-                url: "http://localhost:3000",
-            },
-            {
-                url: "http://localhost:3001",
+                url: serverUrl,
             },
         ],
     },
@@ -47,14 +49,16 @@ const specs = swaggerJsdoc(options);
 
 //Mongoose
 require("./api/models/db");
-
+const cors = require('cors');
 var app = express();
 app.disable("x-powered-by");
+app.use(cors());
+
 
 app.use(
-    "/api-docs",
-    swaggerUi.serve,
-    swaggerUi.setup(specs, { explorer: true })
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(specs, { explorer: true })
 );
 
 app.use(logger("dev"));
@@ -64,11 +68,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(
-    session({
-        secret: "cat",
-        resave: false,
-        saveUninitialized: false,
-    })
+  session({
+    secret: "cat",
+    resave: false,
+    saveUninitialized: false,
+  })
 );
 
 app.use("/", indexRouter);
@@ -76,7 +80,9 @@ app.use("/", indexRouter);
 app.use(passport.authenticate("session"));
 app.use("/api/auth", authRouter);
 
-app.use(middlewareAuth);
+if (process.env.NODE_ENV === "production") {
+    app.use(middlewareAuth);
+}
 
 app.use("/properties", propertiesRouter);
 app.use("/users", usersRouter);

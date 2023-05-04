@@ -1,0 +1,38 @@
+[
+    {
+        "name": "Bonaparte",
+        "kind": "groceries",
+        "addres": "Avenida Francisco de Goya, 17",
+        "lng": -0.8881719,
+        "lat": 41.6427539,
+        "price": 125355,
+        "basebaseIncome": 1611
+    },
+    {
+        "name": "El Fuelle",
+        "kind": "groceries",
+        "addres": "Calle Mayor, 59",
+        "lng": -0.8743648,
+        "lat": 41.6526014,
+        "price": 184505,
+        "basebaseIncome": 1216
+    },
+    {
+        "name": "Il Principale",
+        "kind": "groceries",
+        "addres": "Calle Verónica, 1",
+        "lng": -0.8788064,
+        "lat": 41.652238,
+        "price": 121109,
+        "basebaseIncome": 2627
+    },
+    {
+        "name": "Beerland",
+        "kind": "groceries",
+        "addres": "Plaza de San Francisco, 17",
+        "lng": -0.895063,
+        "lat": 41.641708,
+        "price": 185973,
+        "basebaseIncome": 1916
+    }
+]
