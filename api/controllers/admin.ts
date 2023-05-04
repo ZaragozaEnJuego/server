@@ -1,3 +1,4 @@
+import PropertieModel from "../models/properties";
 import Users from "../models/users";
 import { Request, Response, response } from "express";
 
@@ -84,6 +85,7 @@ const getUserList = (req: Request, res: Response) => {
     .catch((err) => res.status(500).json(err));
 };
 
+// TODO: Documentación del método
 const updateAccess = (req: Request, res: Response) => {
   if (req.params.id === undefined) {
     res.status(400).json({
@@ -106,12 +108,19 @@ const updateAccess = (req: Request, res: Response) => {
     { access },
     { new: true } // devuelve el usuario actualizado
   )
-    .then((user) =>
-      !user
-        ? res.status(404).json({ message: "User not found" })
-        : res.status(200).json(user)
-    )
-    .catch((err) => res.status(500).json(err));
-};
+    .then((user) => {
+      if (!user) {
+        res.status(404).json({ message: "User not found" })
+      } else if (user.access === false) {
+        //Busca todas las propiedades para las cuales owner === user.id y dejarlas undefined
+        PropertieModel.find({ owner: user.id }, { owner: undefined }).then((properties) => {
+          if (!properties) res.status(404).json({ message: "Property not found" })
+        }).catch((err) => res.status(500).json(err))
+      }
+        //TODO: Buscar todas las ofertas para las cuales owner === user.id o offerer === user.id y eliminarlas
+        res.status(200).json(user)
+      })
+    .catch((err) => res.status(500).json(err))
+}
 
 export { getUserList, updateAccess };
