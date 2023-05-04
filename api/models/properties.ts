@@ -6,7 +6,7 @@ interface Propertie {
   _id?: string;
   address: string;
   price: number;
-  income: number;
+  baseIncome: number;
   owner?: string;
   kind: Kind;
   lat: number;
@@ -17,7 +17,7 @@ const propertieSchema = new Schema<Propertie>({
   name: { type: String, required: true },
   address: { type: String, required: true },
   price: { type: Number, required: true },
-  income: { type: Number, required: true },
+  baseIncome: { type: Number, required: true },
   owner: { type: String, required: false },
   kind: { type: String, required: true },
   lat: { type: Number, required: true },

@@ -1,8 +1,10 @@
-import Propertie from "../models/properties";
 import { Request, Response } from "express";
 import WeatherDataModel from "../models/stats";
 import KindRulesModel from "../models/kindRules";
 import mongoose from "mongoose";
+import PropertieModel from "../models/properties";
+import UserModel from "../models/users";
+import { log } from "console";
 
 /**
  * @swagger
@@ -33,7 +35,7 @@ import mongoose from "mongoose";
  *                     type: string
  *                   price:
  *                     type: number
- *                   income:
+ *                   baseIncome:
  *                     type: number
  *                   owner:
  *                     type: string
@@ -45,7 +47,7 @@ import mongoose from "mongoose";
  */
 const getPropertieList = async (req: Request, res: Response) => {
   try {
-    const list = await Propertie.find();
+    const list = await PropertieModel.find();
     res.status(200).json(list);
   } catch (err) {
     res.status(500).json({ msg: "Internal server error" });
@@ -56,7 +58,7 @@ const getPropertieList = async (req: Request, res: Response) => {
  * tags:
  *   name: Properties
  *   description: The properties managing API
- * /properties/{id}::
+ * /properties/{id}
  *   get:
  *     summary: Get the propertie by id
  *     tags: [Properties]
@@ -84,7 +86,7 @@ const getPropertieList = async (req: Request, res: Response) => {
  *                   type: string
  *                 price:
  *                   type: number
- *                 income:
+ *                 baseIncome:
  *                   type: number
  *                 owner:
  *                   type: string
@@ -97,9 +99,9 @@ const getPropertieList = async (req: Request, res: Response) => {
  *                       type: string
  *                       format: date-time
  *                       description: The date of the stats
- *                     income:
+ *                     baseIncome:
  *                       type: number
- *                       description: The income of the stats
+ *                       description: The baseIncome of the stats
  *
  *       404:
  *         description: The propertie does not exis
@@ -108,14 +110,25 @@ const getPropertieList = async (req: Request, res: Response) => {
  *
  */
 const getPropertie = async (req: Request, res: Response) => {
-  if (req.params.id === undefined) {
+  const id = req.params.id;
+  if (id === undefined || !mongoose.isObjectIdOrHexString(id)) {
     res.status(400).json({ msg: "No id provided" });
     return;
   }
-  const propertie = await Propertie.findById(req.params.id);
+
+  const propertie = await PropertieModel.findById(req.params.id);
   if (propertie === null) {
     res.status(404).json({ msg: "Propertie does not exist" });
     return;
+  }
+  let ownerName: string | undefined;
+  if (propertie.owner !== undefined) {
+    try {
+      const owner = await UserModel.findById(propertie.owner);
+      ownerName = owner?.name;
+    } catch (error) {
+      console.log("no hay user");
+    }
   }
 
   const today = new Date(); // Get current date
@@ -133,6 +146,7 @@ const getPropertie = async (req: Request, res: Response) => {
   const kindResData = await KindRulesModel.findOne({
     kind: propertie.kind,
   });
+
   if (kindResData === null) {
     res.status(500).json({ msg: "Internal error" });
     return;
@@ -140,15 +154,18 @@ const getPropertie = async (req: Request, res: Response) => {
 
   interface statsDTO {
     date: Date;
-    income: number;
+    baseIncome: number;
   }
+  console.log(kindResData?.MaxTemperature);
+  console.log(propertie.baseIncome);
   const stats = weatherData.map((dayData): statsDTO => {
-    //calculate the income modifier
+    console.log(dayData.temperature);
+    //calculate the baseIncome modifier
     let tempModifier = 0;
     if (kindResData.MaxTemperature.value < dayData.temperature) {
-      tempModifier = propertie.income * kindResData.MaxTemperature.modifier;
+      tempModifier = propertie.baseIncome * kindResData.MaxTemperature.modifier;
     } else if (kindResData.MinTemperature.value > dayData.temperature) {
-      tempModifier = propertie.income * kindResData.MinTemperature.modifier;
+      tempModifier = propertie.baseIncome * kindResData.MinTemperature.modifier;
     }
     //calculate the electricity modifier
 
@@ -158,13 +175,13 @@ const getPropertie = async (req: Request, res: Response) => {
     let weatherModifier = 0;
     switch (dayData.state) {
       case "sunny":
-        weatherModifier = propertie.income * kindResData.Weather.sunny;
+        weatherModifier = propertie.baseIncome * kindResData.Weather.sunny;
         break;
       case "cloudy":
-        weatherModifier = propertie.income * kindResData.Weather.cloudy;
+        weatherModifier = propertie.baseIncome * kindResData.Weather.cloudy;
         break;
       case "rainy":
-        weatherModifier = propertie.income * kindResData.Weather.rainy;
+        weatherModifier = propertie.baseIncome * kindResData.Weather.rainy;
         break;
 
       default:
@@ -173,8 +190,11 @@ const getPropertie = async (req: Request, res: Response) => {
 
     return {
       date: dayData.date,
-      income:
-        propertie.income + tempModifier - electricityPrice + weatherModifier,
+      baseIncome:
+        propertie.baseIncome +
+        tempModifier -
+        electricityPrice +
+        weatherModifier,
     };
   });
 
@@ -183,8 +203,8 @@ const getPropertie = async (req: Request, res: Response) => {
     _id: propertie._id,
     address: propertie.address,
     price: propertie.price,
-    income: propertie.income,
-    owner: propertie.owner,
+    baseIncome: propertie.baseIncome,
+    owner: ownerName,
     kind: propertie.kind,
     stats: stats,
   });
@@ -271,23 +291,26 @@ const getPropertieRules = async (req: Request, res: Response) => {
     return;
   }
 
-  Propertie.findById(propertieId)
-    .then((propertie) => {
-      KindRulesModel.find({ kind: propertie?.kind })
-        .then((kindRules) => {
-          res.status(200).json(kindRules);
-        })
-        .catch((reason) =>
-          res.status(500).json({
-            message: "Propertie have not kind rules associated",
-          })
-        );
-    })
-    .catch((reason) => {
-      res.status(404).json({
-        message: "Not found, propertie does not exist",
-      });
+  const propertie = await PropertieModel.findById(propertieId);
+  if (propertie === null) {
+    res.status(404).json({
+      message: "Not found, propertie does not exist",
     });
+    return;
+  }
+
+  try {
+    const rules = await KindRulesModel.findOne({
+      kind: propertie?.kind,
+    });
+    console.log(rules);
+
+    res.status(200).json(rules);
+  } catch (error) {
+    res.status(500).json({
+      message: "Propertie have not kind rules associated",
+    });
+  }
 };
 /**
  * @swagger
@@ -333,7 +356,7 @@ const getPropertieRules = async (req: Request, res: Response) => {
  *                 price:
  *                   type: number
  *                   description: Precio de la propiedad
- *                 income:
+ *                 baseIncome:
  *                   type: number
  *                   description: Ingreso generado por la propiedad
  *                 owner:
@@ -394,47 +417,41 @@ const propertieBuy = async (req: Request, res: Response) => {
   }
 
   // Iniciar una nueva sesión de MongoDB para garantizar atomicidad en todas las consultas
-  const session = await mongoose.startSession();
 
   //validate newOwner
 
   try {
-    await session.withTransaction(async () => {
-      const updatedPropertie = await Propertie.findByIdAndUpdate(
-        propertieId,
-        { owner: body.ownerId },
-        { new: true }
-      );
-      res.status(201).json(updatedPropertie);
-    });
+    const landlord = await UserModel.findById(body.ownerId);
+
+    if (landlord === null) {
+      res.status(400).json({ msg: "Wrong landlord Id" });
+      return;
+    }
+    const propertie = await PropertieModel.findById(propertieId);
+    if (propertie === null) {
+      res.status(404).json({ msg: "Wrong propertie Id" });
+      return;
+    }
+    if (propertie.owner !== undefined) {
+      res.status(400).json({ msg: "Propertie owned" });
+      return;
+    }
+    if (landlord.liquidity < propertie.price) {
+      res.status(400).json({ msg: "Not enought money" });
+      return;
+    }
+    const updatedPropertie = await PropertieModel.findByIdAndUpdate(
+      propertieId,
+      { owner: body.ownerId },
+      { new: true }
+    );
+    const newBalance = landlord.liquidity - propertie.price;
+
+    await UserModel.findByIdAndUpdate(body.ownerId, { liquidity: newBalance });
+    res.status(201).json({ id: updatedPropertie?._id });
   } catch (error: any) {
     res.status(500).json({ msg: error.message });
-  } finally {
-    // Finalizar la sesión de MongoDB
-    session.endSession();
   }
 };
 
-const propertieCreate = (req: Request, res: Response) => {
-  const propertie = Propertie.create({
-    name: "Nombre",
-    address: "Dirección",
-    income: 100,
-    price: 10000,
-    kind: "Health",
-  })
-    .then((propertie) => {
-      res.status(201).json(propertie);
-    })
-    .catch((err) => {
-      res.status(400).json(err);
-    });
-};
-
-export {
-  propertieCreate,
-  getPropertieList,
-  getPropertie,
-  getPropertieRules,
-  propertieBuy,
-};
+export { getPropertieList, getPropertie, getPropertieRules, propertieBuy };

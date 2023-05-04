@@ -23,8 +23,9 @@ RUN mkdir -p /data/db
 
 ENV TZ=Europe/Madrid
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
-RUN apt install -y mongodb-org && rm -rf /var/lib/apt/lists/*
+RUN apt update -y 
+RUN apt install -y mongodb-org 
+RUN rm -rf /var/lib/apt/lists/*
 
 RUN useradd --create-home --shell /bin/zsh vscode
 RUN adduser vscode sudo 
