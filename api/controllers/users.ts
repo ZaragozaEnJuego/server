@@ -99,6 +99,23 @@ const getUser = async (req: Request, res: Response) => {
   res.status(200).json(user);
 };
 
+const getIsAdmin = ( 
+  mail : string 
+) => {
+  return new Promise((resolve, reject) => {
+    UserModel.findOne({ mail: mail })
+      .then((user) => {
+        if (user) {
+          resolve(user.admin);
+          //console.log(`El usuario encontrado es: ${user}`);
+        } else {
+          reject(mail);
+        }
+      })
+      .catch((err) => reject(err));
+  });
+};
+
 const getId = ( 
   mail : string 
 ) => {
@@ -148,4 +165,4 @@ const findOrCreateUser = (
   });
 };
 
-export { getUser, findOrCreateUser, getId };
+export { getUser, findOrCreateUser, getId, getIsAdmin };
