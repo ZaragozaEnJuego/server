@@ -55,9 +55,9 @@ passport.use(
       try {
         //checking values
         const name: string =
-          profile._json.login === undefined ? "" : profile._json.login;
+          profile.username === undefined ? "" : profile.username;
         const email: string =
-          profile._json.login+"@github.com" === undefined ? "" : profile._json.login+"@github.com";
+          profile.username+"@github.com" === undefined ? "" : profile.username+"@github.com";
         const user = findOrCreateUser(name, email, false);
         return cb(null, user);
       } catch (err) {
