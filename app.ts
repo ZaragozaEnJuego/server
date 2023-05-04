@@ -12,7 +12,6 @@ import { Request,Response ,NextFunction} from "express";
 var express = require("express");
 require("dotenv").config();
 var path = require("path");
-const cors = require("cors");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const passport = require("passport");
