@@ -114,7 +114,7 @@ const updateAccess = (req: Request, res: Response) => {
       } else if (user.access === false) {
         //Busca todas las propiedades para las cuales owner === user.id y dejarlas undefined
         PropertieModel.find({ owner: user.id }, { owner: undefined }).then((properties) => {
-          if (!properties) res.status(404).json({ message: "Property not found" })
+          if (properties.length === 0) res.status(404).json({ message: "Property not found" })
         }).catch((err) => res.status(500).json(err))
       }
         //TODO: Buscar todas las ofertas para las cuales owner === user.id o offerer === user.id y eliminarlas
