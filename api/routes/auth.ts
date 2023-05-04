@@ -25,7 +25,7 @@ router.get(
       );
       //envio del JWT como respuesta al cliente
       //res.redirect(`${clientUrl}?token=${token}`)
-      res.redirect(`${clientUrl}`) ;
+      res.redirect(`${clientUrl}?token=${token}`) ;
     }
   );
 
