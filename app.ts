@@ -54,7 +54,7 @@ var app = express();
 app.disable("x-powered-by");
 app.use((req:Request, res:Response, next: NextFunction) => {
   res.header("Access-Control-Allow-Credentials", "true");
-  res.header("Access-Control-Allow-Origin", `${req.headers.origin},https://server-production-29b0.up.railway.app,https://accounts.google.com`);
+  res.header("Access-Control-Allow-Origin", `${req.headers.origin}, https://server-production-29b0.up.railway.app, https://accounts.google.com`);
   res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
   res.header(
       "Access-Control-Allow-Headers",
