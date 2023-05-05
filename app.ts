@@ -4,8 +4,6 @@ import propertiesRouter from "./api/routes/properties";
 import usersRouter from "./api/routes/users";
 import authRouter from "./api/routes/auth";
 import middlewareAuth from "./api/controllers/middlewareAuth";
-import cron from "node-cron";
-import { setWeatherData } from "./api/controllers/stats";
 import { Request,Response ,NextFunction} from "express";
 
 //FOR TESTING LOOK
@@ -75,20 +73,6 @@ app.use(
     resave: false,
     saveUninitialized: false,
   })
-);
-
-/* "0 5 * * *"
-- 0 -> Se ejecutará en el minuto 0.
-- 5 -> Indica la hora (5 de la mañana)
-- * -> Todos los días del mes, todos los meses del año, cualquier día
-*/
-cron.schedule("0 5 * * *", async () => {
-    try {
-      await setWeatherData();
-    } catch (error) {
-      console.error(error);
-    }
-  }
 );
 
 app.use("/", indexRouter);
