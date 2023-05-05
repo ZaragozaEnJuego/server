@@ -39,12 +39,9 @@
         "@types/jest": "^29.4.2",
         "@types/jsonwebtoken": "^9.0.1",
         "@types/node": "^18.15.3",
-<<<<<<< HEAD
         "@types/passport-discord": "^0.1.6",
         "@types/passport-github2": "^1.2.5",
         "@types/node-cron": "^3.0.7",
-=======
->>>>>>> main
         "@types/passport-google-oauth20": "^2.0.11",
         "@types/supertest": "^2.0.12",
         "@typescript-eslint/eslint-plugin": "^5.43.0",
