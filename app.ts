@@ -71,7 +71,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use(
   session({
-    secret: "cat",
+    secret: 'cat',
     resave: false,
     saveUninitialized: false,
   })
