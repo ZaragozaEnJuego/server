@@ -1,7 +1,5 @@
 import mongoose, { Model, Schema } from "mongoose";
 
-export type State = "sunny" | "cloudy" | "rainy" ;
-
 export interface WeatherData {
   date: Date;
   temperature: number;
