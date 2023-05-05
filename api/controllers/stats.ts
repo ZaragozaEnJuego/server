@@ -119,8 +119,38 @@ const getSkyState = async (): Promise<string> => {
       return "cloudy";
     case "Nubes altas":
       return "cloudy";
-    default:
+    case "Chubascos":
       return "rainy";
+    case "Lluvia ligera":
+      return "rainy";
+    case "LLuvia":
+      return "rainy";
+    case "Lluvia moderada":
+      return "rainy";
+    case "Lluvia fuerte":
+      return "rainy";
+    case "Chubascos tormentosos":
+      return "rainy";
+    case "Nieve ligera":
+      return "rainy";
+    case "Nieve":
+      return "rainy";
+    case "Nieve moderada":
+      return "rainy";
+    case "Nieve fuerte":
+      return "rainy";
+    case "Granizo ligero":
+      return "rainy";
+    case "Granizo":
+      return "rainy";
+    case "Granizo moderado":
+      return "rainy";
+    case "Granizo fuerte":
+      return "rainy";
+    case "Tormenta":
+      return "rainy";
+    default:
+      return "sunny";
   }
 };
 
