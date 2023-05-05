@@ -4,6 +4,7 @@ import passport from "passport";
 import GoogleStrategy from "passport-google-oauth20";
 import GitHubStrategy from "passport-github2";
 import DiscordStrategy from "passport-discord";
+import { error } from "console";
 
 const serverUrl = process.env.SERVER_URL ?? "http://localhost:3000";
 passport.use(
@@ -28,8 +29,13 @@ passport.use(
                     profile._json.email === undefined
                         ? ""
                         : profile._json.email;
-                const user = findOrCreateUser(name, email, false);
-                done(null, user);
+                const user = await findOrCreateUser(name, email, false);
+                // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+                if (user) {
+                  done(null, user);
+                } else {
+                  done(null, false);
+                }
             } catch (err) {
                 done(err as Error);
             }
@@ -46,11 +52,11 @@ passport.use(
       clientSecret: "8369b5549a0c3a95ddde34d4591eba68d4a8e53d",
       callbackURL: "http://localhost:3000/api/auth/github/callback",
     },
-    function (
+    async function (
       accessToken: string,
       refreshToken: string,
       profile: GitHubStrategy.Profile,
-      cb: any
+      done: any
     ) {
       try {
         //checking values
@@ -58,13 +64,18 @@ passport.use(
           profile.username === undefined ? "" : profile.username;
         const email: string =
           profile.username+"@github.com" === undefined ? "" : profile.username+"@github.com";
-        const user = findOrCreateUser(name, email, false);
-        return cb(null, user);
+          const user = await findOrCreateUser(name, email, false);
+          // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+          if (user) {
+            done(null, user);
+          } else {
+            done(null, false);
+          }
       } catch (err) {
-        return cb(err);
+          done(err as Error);
       }
-    }
-  )
+  }
+)
 );
 
 passport.use(
@@ -77,11 +88,11 @@ passport.use(
       callbackURL: "http://localhost:3000/api/auth/discord/callback",
       scope: ['identify', 'email'],
     },
-    function (
+    async function (
       accessToken: string,
       refreshToken: string,
       profile: DiscordStrategy.Profile,
-      cb: any
+      done: any
     ) {
       try {
         //checking values
@@ -89,13 +100,18 @@ passport.use(
           profile.username === undefined ? "" : profile.username;
         const email: string =
           profile.username+"@discord.com" === undefined ? "" : profile.username+"@discord.com";
-        const user = findOrCreateUser(name, email, false);
-        return cb(null, user);
+          const user = await findOrCreateUser(name, email, false);
+          // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+          if (user) {
+            done(null, user);
+          } else {
+            done(null, false);
+          }
       } catch (err) {
-        return cb(err);
+          done(err as Error);
       }
-    }
-  )
+  }
+)
 );
 
 passport.serializeUser((user: any, cb: any) => {

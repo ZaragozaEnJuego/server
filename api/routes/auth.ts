@@ -20,12 +20,11 @@ router.get(
   "/google/callback",
   passport.authenticate("google", { failureRedirect: "/login" }),
   async (req: Request, res: Response) => {
-    const token = jwt.sign({ mail: req.body.mail }, "cat", {
-      expiresIn: "14h",
-    });
     try {
-      const userId = await getId(req.body.mail);
-      const isAdmin = await getIsAdmin(req.body.mail);
+      const mail = req.user.mail;
+      const token = jwt.sign({ mail: mail }, "cat", { expiresIn: "14h",});
+      const userId = await getId(mail);
+      const isAdmin = await getIsAdmin(mail);
       //envio del JWT como respuesta al cliente
       //res.redirect(`${clientUrl}?token=${token}`)
       res.redirect(`${clientUrl}?token=${token}&id=${userId}&admin=${isAdmin}`);
@@ -41,14 +40,18 @@ router.get("/github", passport.authenticate("github"));
 router.get(
   "/github/callback",
   passport.authenticate("github", { failureRedirect: "/api/auth/github" }),
-  (req: Request, res: Response) => {
-    const token = jwt.sign({ mail: req.body.mail }, "cat", {
-      expiresIn: "14h",
-    });
-    const userId = getId(req.body.mail);
-    //envio del JWT como respuesta al cliente
-    //res.redirect(`${clientUrl}?token=${token}`)
-    res.redirect(`${clientUrl}?token=${token}&id=${userId}&admin=false`);
+  async (req: Request, res: Response) => {
+    try {
+      const mail = req.user.mail;
+      const token = jwt.sign({ mail: mail }, "cat", { expiresIn: "14h",});
+      const userId = await getId(mail);
+      const isAdmin = await getIsAdmin(mail);
+      //envio del JWT como respuesta al cliente
+      //res.redirect(`${clientUrl}?token=${token}`)
+      res.redirect(`${clientUrl}?token=${token}&id=${userId}&admin=${isAdmin}`);
+    } catch (error) {
+      res.redirect(`${clientUrl}`);
+    }
   }
 );
 
@@ -58,14 +61,18 @@ router.get("/discord", passport.authenticate("discord"));
 router.get(
   "/discord/callback",
   passport.authenticate("discord", { failureRedirect: "/api/auth/discord" }),
-  (req: Request, res: Response) => {
-    const token = jwt.sign({ mail: req.body.mail }, "cat", {
-      expiresIn: "14h",
-    });
-    const userId = getId(req.body.mail);
-    //envio del JWT como respuesta al cliente
-    //res.redirect(`${clientUrl}?token=${token}`)
-    res.redirect(`${clientUrl}?token=${token}&id=${userId}&admin=false`);
+  async (req: Request, res: Response) => {
+    try {
+      const mail = req.user.mail;
+      const token = jwt.sign({ mail: mail }, "cat", { expiresIn: "14h",});
+      const userId = await getId(mail);
+      const isAdmin = await getIsAdmin(mail);
+      //envio del JWT como respuesta al cliente
+      //res.redirect(`${clientUrl}?token=${token}`)
+      res.redirect(`${clientUrl}?token=${token}&id=${userId}&admin=${isAdmin}`);
+    } catch (error) {
+      res.redirect(`${clientUrl}`);
+    }
   }
 );
 
