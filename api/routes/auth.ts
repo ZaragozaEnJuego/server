@@ -23,11 +23,15 @@ router.get(
     const token = jwt.sign({ mail: req.body.mail }, "cat", {
       expiresIn: "14h",
     });
-    const userId = await getId(req.body.mail);
-    const isAdmin = await getIsAdmin(req.body.mail);
-    //envio del JWT como respuesta al cliente
-    //res.redirect(`${clientUrl}?token=${token}`)
-    res.redirect(`${clientUrl}?token=${token}&id=${userId}&admin=${isAdmin}`);
+    try {
+      const userId = await getId(req.body.mail);
+      const isAdmin = await getIsAdmin(req.body.mail);
+      //envio del JWT como respuesta al cliente
+      //res.redirect(`${clientUrl}?token=${token}`)
+      res.redirect(`${clientUrl}?token=${token}&id=${userId}&admin=${isAdmin}`);
+    } catch (error) {
+      res.redirect(`${clientUrl}`);
+    }
   }
 );
 
