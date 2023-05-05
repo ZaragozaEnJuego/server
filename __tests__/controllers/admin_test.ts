@@ -42,9 +42,9 @@ describe("getUserList", () => {
 
 describe("updateAccess", () => {
     it("Should change user access attribute", async () => {
-        //TODO: Desarrollar esta prueba
+        //TODO: Desarrollar esta prueba para comprobar que se modifica el atributo access
     })
     it("Should change owner attribute for all user properties when blocked", async () => {
-        //TODO: Desarrollar esta prueba
+        //TODO: Desarrollar esta prueba para comprobar que se pierden las propiedades
     })
 })
