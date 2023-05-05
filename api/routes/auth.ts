@@ -27,7 +27,7 @@ router.get(
       const isAdmin = await getIsAdmin(mail);
       //envio del JWT como respuesta al cliente
       //res.redirect(`${clientUrl}?token=${token}`)
-      res.redirect(`${clientUrl}?token=${token}&id=${userId}&admin=${isAdmin}`);
+      res.redirect(`${clientUrl}?token=${token}&userId=${userId}&isAdmin=${isAdmin}`);
     } catch (error) {
       res.redirect(`${clientUrl}`);
     }
@@ -48,7 +48,7 @@ router.get(
       const isAdmin = await getIsAdmin(mail);
       //envio del JWT como respuesta al cliente
       //res.redirect(`${clientUrl}?token=${token}`)
-      res.redirect(`${clientUrl}?token=${token}&id=${userId}&admin=${isAdmin}`);
+      res.redirect(`${clientUrl}?token=${token}&userId=${userId}&isAdmin=${isAdmin}`);
     } catch (error) {
       res.redirect(`${clientUrl}`);
     }
@@ -69,7 +69,7 @@ router.get(
       const isAdmin = await getIsAdmin(mail);
       //envio del JWT como respuesta al cliente
       //res.redirect(`${clientUrl}?token=${token}`)
-      res.redirect(`${clientUrl}?token=${token}&id=${userId}&admin=${isAdmin}`);
+      res.redirect(`${clientUrl}?token=${token}&userId=${userId}&isAdmin=${isAdmin}`);
     } catch (error) {
       res.redirect(`${clientUrl}`);
     }
