@@ -93,15 +93,13 @@ const getUser = async (req: Request, res: Response) => {
   }
   const user = await UserModel.findById(req.params.id);
   if (user === null) {
-      res.status(404).json({ msg: "User does not exist" });
-      return;
+    res.status(404).json({ msg: "User does not exist" });
+    return;
   }
   res.status(200).json(user);
 };
 
-const getIsAdmin = ( 
-  mail : string 
-) => {
+const getIsAdmin = (mail: string) => {
   return new Promise((resolve, reject) => {
     UserModel.findOne({ mail: mail })
       .then((user) => {
@@ -116,9 +114,7 @@ const getIsAdmin = (
   });
 };
 
-const getId = ( 
-  mail : string 
-) => {
+const getId = (mail: string) => {
   return new Promise((resolve, reject) => {
     UserModel.findOne({ mail: mail })
       .then((user) => {
@@ -133,11 +129,7 @@ const getId = (
   });
 };
 
-const findOrCreateUser = (
-  name: string,
-  mail: string,
-  admin: boolean
-) => {
+const findOrCreateUser = (name: string, mail: string, admin: boolean) => {
   return new Promise((resolve, reject) => {
     UserModel.findOne({ mail: mail })
       .then((user) => {
@@ -148,7 +140,7 @@ const findOrCreateUser = (
           //console.log(`No se encontró ningún usuario con el correo ${mail}`);
           UserModel.create({
             name: name,
-            liquidity: 10000,
+            liquidity: 4000000,
             mail: mail,
             admin: admin,
           })
