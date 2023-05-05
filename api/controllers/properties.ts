@@ -58,7 +58,7 @@ const getPropertieList = async (req: Request, res: Response) => {
  * tags:
  *   name: Properties
  *   description: The properties managing API
- * /properties/{id}
+ * /properties/{id}:
  *   get:
  *     summary: Get the propertie by id
  *     tags: [Properties]
