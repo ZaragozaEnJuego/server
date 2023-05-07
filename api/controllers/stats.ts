@@ -86,7 +86,7 @@ const getSkyState = async (): Promise<string> => {
 
     const dataResponse = await axios.get<WeatherData>(datos);
     
-    if (!dataResponse?.data?.prediccion?.dia?.length) {
+    if (dataResponse?.data?.prediccion?.dia?.length === 0) {
       return 'sunny';
     }
 
