@@ -1,5 +1,6 @@
 import UserModel from "../models/users";
 import { Request, Response } from "express";
+import logger from "./logger";
 
 /**
  * @swagger
@@ -106,6 +107,7 @@ const getIsAdmin = (mail: string) => {
         if (user) {
           resolve(user.admin);
           //console.log(`El usuario encontrado es: ${user}`);
+          logger.info("usuario encontrado: " + mail + "/" + user);
         } else {
           reject(mail);
         }
