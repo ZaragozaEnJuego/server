@@ -5,6 +5,7 @@ import usersRouter from "./api/routes/users";
 import authRouter from "./api/routes/auth";
 import middlewareAuth from "./api/controllers/middlewareAuth";
 import cron from "node-cron";
+import logger from "./api/controllers/logger";
 import { setWeatherData } from "./api/controllers/stats";
 import { Request,Response ,NextFunction} from "express";
 
@@ -15,7 +16,7 @@ var express = require("express");
 require("dotenv").config();
 var path = require("path");
 var cookieParser = require("cookie-parser");
-var logger = require("morgan");
+var log = require("morgan");
 const passport = require("passport");
 const session = require("express-session");
 
@@ -63,7 +64,7 @@ app.use(
   swaggerUi.setup(specs, { explorer: true })
 );
 
-app.use(logger("dev"));
+app.use(log("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -86,7 +87,7 @@ cron.schedule("0 5 * * *", async () => {
     try {
       await setWeatherData();
     } catch (error) {
-      console.error(error);
+      logger.error("err: " + error);
     }
   }
 );
