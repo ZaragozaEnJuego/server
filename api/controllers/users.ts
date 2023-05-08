@@ -1,6 +1,7 @@
 import UserModel from "../models/users";
 import { Request, Response } from "express";
 import logger from "./logger";
+import PropertieModel, { Propertie } from "../models/properties";
 
 /**
  * @swagger
@@ -92,12 +93,30 @@ const getUser = async (req: Request, res: Response) => {
     res.status(400).json({ msg: "No id provided" });
     return;
   }
+  interface userDto {
+    id: string;
+    name: string;
+    icon?: string;
+    mail?: string;
+    liquidity: number;
+    //lastDayIncome: number;
+    properties: Propertie[];
+  }
   const user = await UserModel.findById(req.params.id);
+
   if (user === null) {
     res.status(404).json({ msg: "User does not exist" });
     return;
   }
-  res.status(200).json(user);
+  const properties = await PropertieModel.find({ owner: req.params.id });
+  const userResponse: userDto = {
+    id: user._id,
+    name: user.name,
+    mail: user.mail,
+    liquidity: user.liquidity,
+    properties: properties,
+  };
+  res.status(200).json(userResponse);
 };
 
 const getIsAdmin = (mail: string) => {
