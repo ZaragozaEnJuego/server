@@ -3,7 +3,6 @@ import { getWeatherData } from "../controllers/stats";
 
 const router = Router();
 
-router
-    .get("/weather", getWeatherData)
+router.get("/", getWeatherData);
 
 export default router;
