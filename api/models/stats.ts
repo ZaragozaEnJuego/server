@@ -1,4 +1,5 @@
 import mongoose, { Model, Schema } from "mongoose";
+import { Kind } from "./kindRules";
 
 export type State = "sunny" | "cloudy" | "rainy" ;
 
@@ -22,3 +23,15 @@ const WeatherDataModel: Model<WeatherData> =
   mongoose.model("WeatherData", weatherDataSchema);
 
 export default WeatherDataModel;
+
+export interface PropertyPurchaseData {
+  property: string,
+  kind: Kind,
+  date: Date
+}
+
+const propertyPurchaseDataSchema = new Schema<PropertyPurchaseData>({
+  property: { type: String, required: true },
+  kind: { type: String, required: true},
+  date: { type: Date, required: true }
+})
