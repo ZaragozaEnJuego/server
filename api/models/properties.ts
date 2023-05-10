@@ -1,7 +1,7 @@
 import mongoose, { Model, Schema } from "mongoose";
 import { Kind } from "./kindRules";
 
-interface Propertie {
+export interface Propertie {
   name: string;
   _id?: string;
   address: string;
