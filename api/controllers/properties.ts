@@ -47,7 +47,9 @@ import { log } from "console";
  */
 const getPropertieList = async (req: Request, res: Response) => {
   try {
-    const list = await PropertieModel.find();
+    const list = await PropertieModel.find().limit(100);
+    console.log(list.length);
+
     res.status(200).json(list);
   } catch (err) {
     res.status(500).json({ msg: "Internal server error" });
