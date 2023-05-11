@@ -32,9 +32,9 @@ describe("getPropertieList", () => {
       { id: 2, name: "Property 2" },
       { id: 3, name: "Property 3" },
     ];
-    jest
-      .mocked(PropertieModel.find)
-      .mockResolvedValueOnce(expectedProperties as any);
+    jest.spyOn(PropertieModel, "find").mockReturnValueOnce({
+      limit: jest.fn().mockReturnValueOnce(expectedProperties),
+    } as any);
 
     // Ejecuta la función que quieres probar
     await getPropertieList(req, res);
@@ -47,7 +47,9 @@ describe("getPropertieList", () => {
   it("should return a 500 error when there is an error with the database", async () => {
     // Define el error que debe devolver el modelo mock cuando se llama a "find"
 
-    jest.mocked(PropertieModel.find).mockRejectedValueOnce({});
+    jest.spyOn(PropertieModel, "find").mockReturnValueOnce({
+      limit: jest.fn().mockRejectedValueOnce({}),
+    } as any);
 
     // Ejecuta la función que quieres probar
     await getPropertieList(req, res);
