@@ -214,21 +214,51 @@ const getOffer = (req: Request, res: Response) => {
  *                      type: number
  *                      description: The involved amount of money in the offer
  *        400:
- *           description: Error trying to create an offer
+ *           description: Lack of parameters
+ *        500:
+ *           description: Some server error
  */
 const createOffer = (req: Request, res: Response) => {
-    Offer.create({
-        property: "Id_property",
-        offerer: "ID_landlord_offerer",
-        owner: "ID_landlord_owner",
-        amount: 100000
-    })
-    .then((offer) => {
-        res.status(201).json(offer);
-      })
-      .catch((err) => {
-        res.status(400).json(err);
-      });
+  interface IBody {
+    property: string,
+    offerer: string,
+    owner: string,
+    amount: number
+  }
+  const body: IBody = req.body
+
+  if (body.property === null) {
+    res.status(400).json({ msg: "Required property id" })
+    return
+  }
+
+  if (body.offerer === null) {
+    res.status(400).json({ msg: "Required offerer id" })
+    return
+  }
+
+  if (body.owner === null) {
+    res.status(400).json({ msg: "Required owner id" })
+    return
+  }
+
+  if (body.amount === null) {
+    res.status(400).json({ msg: "Required amount of money" })
+    return
+  }
+
+  Offer.create({
+    property: body.property,
+    offerer: body.offerer,
+    owner: body.owner,
+    amount: body.amount
+  })
+  .then((offer) => {
+    res.status(201).json(offer);
+  })
+  .catch((err) => {
+    res.status(500).json(err);
+  });
 }
 
 /**
