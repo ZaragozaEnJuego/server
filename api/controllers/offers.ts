@@ -45,8 +45,6 @@ import OfferModel from "../models/offers"
  *                      amount:
  *                        type: number
  *                        description: The involved amount of money in the offer
- *        404:
- *           description: Offer not found
  *        500:
  *           description: Some server error
  */
@@ -98,8 +96,6 @@ const getOffererOffers = async (req: Request, res: Response) => {
  *                      amount:
  *                        type: number
  *                        description: The involved amount of money in the offer
- *        404:
- *           description: Offer not found
  *        500:
  *           description: Some server error
  */
@@ -154,8 +150,8 @@ const getOwnerOffers = async (req: Request, res: Response) => {
  *        500:
  *           description: Some server error
  */
-const getOffer = (req: Request, res: Response) => {
-    Offer.findById(req.params.id)
+const getOffer = async (req: Request, res: Response) => {
+    await OfferModel.findById(req.params.id)
       .then((offer) => {
         if (offer === null) {
           res.status(404).json({
@@ -219,7 +215,7 @@ const getOffer = (req: Request, res: Response) => {
  *        500:
  *           description: Some server error
  */
-const createOffer = (req: Request, res: Response) => {
+const createOffer = async (req: Request, res: Response) => {
   interface IBody {
     property: string,
     offerer: string,
@@ -248,7 +244,7 @@ const createOffer = (req: Request, res: Response) => {
     return
   }
 
-  Offer.create({
+  await OfferModel.create({
     property: body.property,
     offerer: body.offerer,
     owner: body.owner,
