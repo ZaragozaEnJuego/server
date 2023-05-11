@@ -3,7 +3,7 @@ import { propertyPurchases, getPropertiesByKind, collectPropertyPurchaseInfo } f
 
 const router = Router()
 
-router.get("/", getPropertiesByKind)
+router.get("/kind:", getPropertiesByKind)
 router.get("/purchases", propertyPurchases)
 router.post("/", collectPropertyPurchaseInfo)
 
