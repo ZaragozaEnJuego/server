@@ -4,7 +4,7 @@ import { propertyPurchases, getPropertiesByKind, collectPropertyPurchaseInfo } f
 const router = Router()
 
 router.get("/", getPropertiesByKind)
-router.get("/buys", propertyPurchases)
+router.get("/purchases", propertyPurchases)
 router.post("/", collectPropertyPurchaseInfo)
 
 export default router
