@@ -2,6 +2,8 @@ import mongoose from "mongoose"
 import Offer from "../models/offers"
 import { Request, Response } from "express"
 import OfferModel from "../models/offers"
+import UserModel from "../models/users"
+import PropertieModel from "../models/properties"
 
 /**
  * @swagger
@@ -269,29 +271,11 @@ const createOffer = async (req: Request, res: Response) => {
  *      tags: [Offers]
  *      parameters:
  *        - in: path
- *          name: property
+ *          name: id
  *          schema:
  *             type: string
  *          required: true
- *          description: The id of the property which was offered
- *       - in: path 
- *          name: owner
- *          schema:
- *             type: string
- *          required: true
- *          description: The property owner id
- *       - in: path 
- *          name: offerer
- *          schema:
- *             type: string
- *          required: true
- *          description: The property offerer id
- *        - in: path
- *          name: amount
- *          schema:
- *             type: number
- *          required: true
- *          description: The amount of money in exchange
+ *          description: The id of the offer to execute
  *      responses:
  *        201:
  *          description: The offer is successfully executed
@@ -347,8 +331,46 @@ const createOffer = async (req: Request, res: Response) => {
  *                   type: string
  *                   description: Server error message
  */
-const execOffer = (req: Request, res: Response) => {
-  //TODO: Definir lógica del servicio
+const execOffer = async (req: Request, res: Response) => {
+  const id = req.params.id;
+  if (id === undefined || !mongoose.isObjectIdOrHexString(id)) {
+    res.status(400).json({ msg: "No id provided" })
+    return
+  }
+
+  try {
+    const offer = await OfferModel.findById(id)
+    if (offer === null) {
+      res.status(404).json({ msg: "The offer does not exist" })
+      return
+    }
+    
+    const offerer = await UserModel.findById(offer.offerer)
+    if (offerer === null) {
+      res.status(404).json({ msg: "Offerer not found" })
+      return
+    }
+    const newOffererBalance = offerer.liquidity - offer.amount
+    await UserModel.findByIdAndUpdate(offer.offerer,
+      { liquidity: newOffererBalance })
+  
+    await PropertieModel.findByIdAndUpdate(offer.property,
+      { owner: offer.offerer },
+      { new: true }
+    )
+  
+    const owner = await UserModel.findById(offer.owner)
+    if (owner === null) {
+      res.status(404).json({ msg: "Owner not found" })
+      return
+    }
+    const newOwnerBalance = owner.liquidity + offer.amount
+    await UserModel.findByIdAndUpdate(offer.owner,{ liquidity: newOwnerBalance })
+    res.status(201).json({ id: id })
+  } catch (error: any) {
+    res.status(500).json({ msg: error.message });
+  }
+
 }
 
 /**
@@ -399,7 +421,7 @@ const execOffer = (req: Request, res: Response) => {
  *                   type: string
  *                   description: Server error message
  */
-const deleteOffer = (req: Request, res: Response) => {
+const deleteOffer = async (req: Request, res: Response) => {
   //TODO: Definir lógica del servicio
 }
 
