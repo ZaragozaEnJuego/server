@@ -118,12 +118,6 @@ async function getPropertiesByKind(req: Request, res: Response) {
  *               type: string
  *             description: The id of the purchased property 
  *        - in: path
- *             name: kind
- *             required: true
- *             schema:
- *               type: Kind
- *             description: The kind of the purchased property
- *        - in: path
  *             name: date
  *             required: true
  *             schema:
@@ -170,6 +164,17 @@ async function collectPropertyPurchaseInfo(req: Request, res: Response) {
     if (body.property === undefined) {
         res.status(400).json({ msg: "Error: property id is required" })
         return
+    }
+
+    try {
+        const propertie = await PropertieModel.findById(body.property)
+        if (propertie === null) {
+            res.status(400).json({ msg: "Error: property id is required" })
+            return
+        }    
+        body.kind = propertie.kind
+    } catch (error: any) {
+        res.status(500).json({ msg: error.message })
     }
 
     if (body.kind === undefined) {
