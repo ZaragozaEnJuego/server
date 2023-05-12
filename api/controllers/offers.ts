@@ -400,8 +400,8 @@ const execOffer = async (req: Request, res: Response) => {
  *                    message:
  *                      type: string
  *                      description: Offer successfully deleted
- *       404:
- *         description: Offer not found
+ *       400:
+ *         description: No id provided
  *         content:
  *           application/json:
  *             schema:
@@ -422,7 +422,18 @@ const execOffer = async (req: Request, res: Response) => {
  *                   description: Server error message
  */
 const deleteOffer = async (req: Request, res: Response) => {
-  //TODO: Definir lógica del servicio
+  const id = req.params.id;
+  if (id === undefined || !mongoose.isObjectIdOrHexString(id)) {
+    res.status(400).json({ msg: "No id provided" })
+    return
+  }
+
+  try {
+    await OfferModel.findByIdAndDelete(id)
+    res.status(201).json({ id: id })
+  } catch (error: any) {
+    res.status(500).json({ msg: error.message });
+  }
 }
 
 export { getOffererOffers, getOwnerOffers, getOffer, createOffer, execOffer, deleteOffer }
