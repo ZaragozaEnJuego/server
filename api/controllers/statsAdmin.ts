@@ -105,7 +105,6 @@ const collectPropertyPurchaseInfo = async (property: string) => {
     try {
         const propertie = await PropertieModel.findById(property)
         if (propertie === null) {
-            console.log("Error: Propiedad no encontrada")
             return
         }
         const kind = propertie.kind
@@ -115,7 +114,6 @@ const collectPropertyPurchaseInfo = async (property: string) => {
             date: new Date()
         })
     } catch (error: any) {
-        console.log("Error: Compra no registrada")
     }
 }
 
