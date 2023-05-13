@@ -449,7 +449,7 @@ const propertieBuy = async (req: Request, res: Response) => {
     const newBalance = landlord.liquidity - propertie.price;
 
     await UserModel.findByIdAndUpdate(body.ownerId, { liquidity: newBalance });
-    collectPropertyPurchaseInfo(propertieId)
+    await collectPropertyPurchaseInfo(propertieId)
     res.status(201).json({ id: updatedPropertie?._id });
   } catch (error: any) {
     res.status(500).json({ msg: error.message });
