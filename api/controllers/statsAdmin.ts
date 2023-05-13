@@ -46,12 +46,12 @@ async function propertyPurchases(req: Request, res: Response) {
 /**
  * @swagger
  * tags:
- *  name: Properties
- *  description: The properties managing API
- * /properties:
+ *  name: Purchases
+ *  description: The purchases managing API
+ * /purchases/kind::
  *   get:
  *      summary: List all properties filtered by kind
- *      tags: [Properties]
+ *      tags: [Purchases]
  *      parameters:
  *       - in: path
  *         name: kind
