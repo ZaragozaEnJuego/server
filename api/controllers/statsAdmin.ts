@@ -102,18 +102,14 @@ async function getPropertiesByKind(req: Request, res: Response) {
 }
 
 const collectPropertyPurchaseInfo = async (property: string) => {
-    try {
-        const propertie = await PropertieModel.findById(property)
-        if (propertie === null) {
-            return
-        }
+    const propertie = await PropertieModel.findById(property)
+    if (propertie !== null) {
         const kind = propertie.kind
         await PropertyPurchaseDataModel.create({
             property: property,
             kind: kind,
             date: new Date()
         })
-    } catch (error: any) {
     }
 }
 
