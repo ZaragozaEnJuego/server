@@ -366,8 +366,8 @@ const execOffer = async (req: Request, res: Response) => {
     }
     const newOwnerBalance = owner.liquidity + offer.amount
     await UserModel.findByIdAndUpdate(offer.owner,{ liquidity: newOwnerBalance })
-    //collectPropertyPurchaseInfo(offer.property)
     res.status(201).json({ id: id })
+    //collectPropertyPurchaseInfo(offer.property)
   } catch (error: any) {
     res.status(500).json({ msg: error.message });
   }
