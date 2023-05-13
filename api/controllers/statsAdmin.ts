@@ -101,103 +101,22 @@ async function getPropertiesByKind(req: Request, res: Response) {
     }
 }
 
-/**
- * @swagger
- * tags:
- *  name: Purchases
- *  description: The purchases managing API
- * /purchases:
- *   post:
- *      summary: Record a new purchase
- *      tags: [Purchases]
- *      parameters:
- *        - in: path
- *             name: property
- *             required: true
- *             schema:
- *               type: string
- *             description: The id of the purchased property 
- *        - in: path
- *             name: date
- *             required: true
- *             schema:
- *               type: Date
- *             description: The date when the property was purchased
- *      responses:
- *          201:
- *            description: Purchase successfully recorded
- *            content:
- *               application/json:
- *                   schema:
- *                      type: object
- *                      properties:
- *                          property:
- *                             type: string
- *                             description: The id of the purchased property 
- *                          kind:
- *                             type: string
- *                             description: The kind of the purchased property
- *                          date:
- *                             type: date
- *                             description: The date when the property was purchased
- *          400:
- *            description: Lack of parameters
- *            content:
- *            application/json:
- *              schema:
- *                type: object
- *                properties:
- *                  message:
- *                    type: string
- *                    description: Error message
- *          500:
- *            description: Some server error                                 
- */
-async function collectPropertyPurchaseInfo(req: Request, res: Response) {
-    interface IBody {
-        property: string,
-        kind: Kind,
-        date: Date
-    }
-    const body: IBody = req.body
-
-    if (body.property === undefined) {
-        res.status(400).json({ msg: "Error: property id is required" })
-        return
-    }
-
+const collectPropertyPurchaseInfo = async (property: string) => {
     try {
-        const propertie = await PropertieModel.findById(body.property)
+        const propertie = await PropertieModel.findById(property)
         if (propertie === null) {
-            res.status(400).json({ msg: "Error: property id is required" })
+            console.log("Error: Propiedad no encontrada")
             return
-        }    
-        body.kind = propertie.kind
-    } catch (error: any) {
-        res.status(500).json({ msg: error.message })
-    }
-
-    if (body.kind === undefined) {
-        res.status(400).json({ msg: "Error: property kind is required" })
-        return
-    }
-
-    if (body.date === undefined) {
-        res.status(400).json({ msg: "Error: date of purchase is required" })
-        return
-    }
-
-    try {
-        const savedPurchaseData = await PropertyPurchaseDataModel.create({
-            property: body.property,
-            kind: body.kind,
-            date: body.date
+        }
+        const kind = propertie.kind
+        await PropertyPurchaseDataModel.create({
+            property: property,
+            kind: kind,
+            date: new Date()
         })
-        res.status(201).json({ property: body.property })
     } catch (error: any) {
-        res.status(500).json({ msg: error.message })
+        console.log("Error: Compra no registrada")
     }
-
 }
 
 export { propertyPurchases, getPropertiesByKind, collectPropertyPurchaseInfo }
