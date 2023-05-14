@@ -8,6 +8,7 @@ import cron from "node-cron";
 import logger from "./api/controllers/logger";
 import { setWeatherData } from "./api/controllers/stats";
 import { Request,Response ,NextFunction} from "express";
+import offerRouter from "./api/routes/offers";
 
 //FOR TESTING LOOK
 //https://dev.to/nathan_sheryak/how-to-test-a-typescript-express-api-with-jest-for-dummies-like-me-4epd
@@ -103,4 +104,6 @@ if (process.env.NODE_ENV === "production") {
 
 app.use("/properties", propertiesRouter);
 app.use("/users", usersRouter);
+app.use("/negotiation", offerRouter)
+
 export default app;

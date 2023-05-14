@@ -8,14 +8,14 @@ import {
   deleteOffer
 } from "../controllers/offers";
 
-const router = Router();
+const offerRouter = Router();
 
-router
-  .get("/negotiation/:id/offerer", getOffererOffers)
-  .get("/negotiation/:id/owner", getOwnerOffers)
-  .get("/negotiation/:id", getOffer)
-  .post("/negotiation/create", createOffer)
-  .post("/negotiation/:id/execute", execOffer)
-  .delete("/negotiation/:id/delete", deleteOffer)
+offerRouter
+  .get("/:id/offerer", getOffererOffers)
+  .get("/:id/owner", getOwnerOffers)
+  .get("/:id", getOffer)
+  .post("/create", createOffer)
+  .post("/:id/execute", execOffer)
+  .delete("/:id/delete", deleteOffer)
 
-export default router
+export default offerRouter
