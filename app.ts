@@ -101,6 +101,6 @@ if (process.env.NODE_ENV === "production") {
 
 app.use("/properties", propertiesRouter);
 app.use("/users", usersRouter);
-app.use("/stats", statsRouter);
+app.use("/weather", statsRouter);
 
 export default app;
