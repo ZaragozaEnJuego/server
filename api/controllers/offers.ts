@@ -1,5 +1,4 @@
 import mongoose from "mongoose"
-import Offer from "../models/offers"
 import { Request, Response } from "express"
 import OfferModel from "../models/offers"
 import UserModel from "../models/users"
@@ -10,7 +9,7 @@ import PropertieModel from "../models/properties"
  * tags:
  *    name: Offers
  *    description: The offers managing API
- * /negotiation/{id}:/offerer:
+ * /negotiation/{id}/offerer:
  *    get:
  *      summary: List all offers when offerer is user
  *      tags: [Offers]
@@ -51,7 +50,7 @@ import PropertieModel from "../models/properties"
  *           description: Some server error
  */
 const getOffererOffers = async (req: Request, res: Response) => {
-    await OfferModel.find({ offerer: req.body.offerer })
+    await OfferModel.find({ offerer: req.params.offerer })
     .then((offer) => offer == null ? res.status(404).json({ message: "Offer not found" }) : res.status(200).json(offer))
     .catch((err) => res.status(500).json(err))
 }
@@ -61,7 +60,7 @@ const getOffererOffers = async (req: Request, res: Response) => {
  * tags:
  *    name: Offers
  *    description: The offers managing API
- * /negotiation/{id}:/owner:
+ * /negotiation/{id}/owner:
  *    get:
  *      summary: List all offers when owner is user
  *      tags: [Offers]
@@ -102,7 +101,7 @@ const getOffererOffers = async (req: Request, res: Response) => {
  *           description: Some server error
  */
 const getOwnerOffers = async (req: Request, res: Response) => {
-  await OfferModel.find({ owner: req.body.owner })
+  await OfferModel.find({ owner: req.params.owner })
   .then((offer) => offer == null ? res.status(404).json({ message: "Offer not found" }) : res.status(200).json(offer))
   .catch((err) => res.status(500).json(err))
 }
