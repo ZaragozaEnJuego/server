@@ -1,9 +1,9 @@
 import { Router } from "express"
 import { propertyPurchases, getPropertiesByKind } from "../controllers/statsAdmin"
 
-const router = Router()
+const adminStatsRouter = Router()
 
-router.get("/kind:", getPropertiesByKind)
-router.get("/purchases", propertyPurchases)
+adminStatsRouter.get("/kind:", getPropertiesByKind)
+adminStatsRouter.get("/purchases", propertyPurchases)
 
-export default router
+export default adminStatsRouter
