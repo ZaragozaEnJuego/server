@@ -450,7 +450,6 @@ const propertieBuy = async (req: Request, res: Response) => {
     const newBalance = landlord.liquidity - propertie.price;
     res.status(201).json({ id: updatedPropertie?._id });
     await UserModel.findByIdAndUpdate(body.ownerId, { liquidity: newBalance });
-    console.log("procede a registrar la compra")
     await PropertyPurchaseDataModel.create({
       property: propertieId,
       kind: propertie.kind,
