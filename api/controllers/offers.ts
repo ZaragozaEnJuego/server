@@ -9,7 +9,7 @@ const getOffererOffers = async (req: Request, res: Response) => {
   await OfferModel.find({ offerer: req.params.offerer })
     .then((offer) =>
       offer == null
-        ? res.status(404).json({ message: "Offer not found" })
+        ? res.status(404).json({ message: "Offers not found" })
         : res.status(200).json(offer)
     )
     .catch((err) => res.status(500).json(err));
@@ -19,7 +19,7 @@ const getOffererOffers = async (req: Request, res: Response) => {
 const getOwnerOffers = async (req: Request, res: Response) => {
   await OfferModel.find({ owner: req.params.owner })
     .then((offers) =>
-      offers.length === 0
+      offers === null
         ? res.status(404).json({ message: "Offers not found" })
         : res.status(200).json(offers)
     )
