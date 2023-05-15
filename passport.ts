@@ -50,7 +50,7 @@ passport.use(
       //clientSecret: config.github.clientSecret,
       clientID:"04d7dcb242b261509049",
       clientSecret: "8369b5549a0c3a95ddde34d4591eba68d4a8e53d",
-      callbackURL: "http://localhost:3000/api/auth/github/callback",
+      callbackURL: serverUrl + "/api/auth/github/callback",
     },
     async function (
       accessToken: string,
@@ -85,7 +85,7 @@ passport.use(
       //clientSecret: config.discord.clientSecret,
       clientID:"1100754605308121108",
       clientSecret: "eRtaYsZkCBTT4Jp40THkzZZiu14e0731",
-      callbackURL: "http://localhost:3000/api/auth/discord/callback",
+      callbackURL: serverUrl + "/api/auth/discord/callback",
       scope: ['identify', 'email'],
     },
     async function (
