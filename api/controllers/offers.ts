@@ -51,14 +51,13 @@ import OfferModel from "../models/offers";
  *        500:
  *           description: Some server error
  */
-const getOffererOffers = (req: Request, res: Response) => {
-    Offer.find({ offerer: req.body.offerer })
-        .then((offer) =>
-            offer == null
-                ? res.status(404).json({ message: "Offer not found" })
-                : res.status(200).json(offer)
-        )
-        .catch((err) => res.status(500).json(err));
+const getOffererOffers = async (req: Request, res: Response) => {
+    try {
+        const offers = await Offer.find({ offerer: req.body.owner });
+        res.status(200).json(offers);
+    } catch (error) {
+        res.status(500).json(error);
+    }
 };
 
 /**
