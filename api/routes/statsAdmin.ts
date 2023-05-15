@@ -3,7 +3,7 @@ import { propertyPurchases, getPropertiesByKind } from "../controllers/statsAdmi
 
 const adminStatsRouter = Router()
 
-adminStatsRouter.get("/kind:", getPropertiesByKind)
+adminStatsRouter.get("/:kind", getPropertiesByKind)
 adminStatsRouter.get("/purchases", propertyPurchases)
 
 export default adminStatsRouter
