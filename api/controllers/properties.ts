@@ -5,7 +5,6 @@ import mongoose from "mongoose";
 import PropertieModel from "../models/properties";
 import UserModel from "../models/users";
 import { log } from "console";
-import { collectPropertyPurchaseInfo } from "./statsAdmin";
 
 /**
  * @swagger
@@ -47,14 +46,14 @@ import { collectPropertyPurchaseInfo } from "./statsAdmin";
  *
  */
 const getPropertieList = async (req: Request, res: Response) => {
-  try {
-    const list = await PropertieModel.find().limit(100);
-    console.log(list.length);
+    try {
+        const list = await PropertieModel.find().limit(100);
+        console.log(list.length);
 
-    res.status(200).json(list);
-  } catch (err) {
-    res.status(500).json({ msg: "Internal server error" });
-  }
+        res.status(200).json(list);
+    } catch (err) {
+        res.status(500).json({ msg: "Internal server error" });
+    }
 };
 /**
  * @swagger
@@ -113,104 +112,109 @@ const getPropertieList = async (req: Request, res: Response) => {
  *
  */
 const getPropertie = async (req: Request, res: Response) => {
-  const id = req.params.id;
-  if (id === undefined || !mongoose.isObjectIdOrHexString(id)) {
-    res.status(400).json({ msg: "No id provided" });
-    return;
-  }
-
-  const propertie = await PropertieModel.findById(req.params.id);
-  if (propertie === null) {
-    res.status(404).json({ msg: "Propertie does not exist" });
-    return;
-  }
-  let ownerName: string | undefined;
-  if (propertie.owner !== undefined) {
-    try {
-      const owner = await UserModel.findById(propertie.owner);
-      ownerName = owner?.name;
-    } catch (error) {
-      console.log("no hay user");
-    }
-  }
-
-  const today = new Date(); // Get current date
-  const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000); // Date last month
-
-  // Realiza la consulta a la base de datos
-  const weatherData = await WeatherDataModel.find({
-    date: { $gte: thirtyDaysAgo, $lte: today },
-  });
-  if (weatherData === null) {
-    res.status(500).json({ msg: "Internal error" });
-    return;
-  }
-
-  const kindResData = await KindRulesModel.findOne({
-    kind: propertie.kind,
-  });
-
-  if (kindResData === null) {
-    res.status(500).json({ msg: "Internal error" });
-    return;
-  }
-
-  interface statsDTO {
-    date: Date;
-    baseIncome: number;
-  }
-  console.log(kindResData?.MaxTemperature);
-  console.log(propertie.baseIncome);
-  const stats = weatherData.map((dayData): statsDTO => {
-    console.log(dayData.temperature);
-    //calculate the baseIncome modifier
-    let tempModifier = 0;
-    if (kindResData.MaxTemperature.value < dayData.temperature) {
-      tempModifier = propertie.baseIncome * kindResData.MaxTemperature.modifier;
-    } else if (kindResData.MinTemperature.value > dayData.temperature) {
-      tempModifier = propertie.baseIncome * kindResData.MinTemperature.modifier;
-    }
-    //calculate the electricity modifier
-
-    const electricityPrice =
-      kindResData.EnergyConsumption * dayData.electricity;
-    //calculate the weather modifier
-    let weatherModifier = 0;
-    switch (dayData.state) {
-      case "sunny":
-        weatherModifier = propertie.baseIncome * kindResData.Weather.sunny;
-        break;
-      case "cloudy":
-        weatherModifier = propertie.baseIncome * kindResData.Weather.cloudy;
-        break;
-      case "rainy":
-        weatherModifier = propertie.baseIncome * kindResData.Weather.rainy;
-        break;
-
-      default:
-        break;
+    const id = req.params.id;
+    if (id === undefined || !mongoose.isObjectIdOrHexString(id)) {
+        res.status(400).json({ msg: "No id provided" });
+        return;
     }
 
-    return {
-      date: dayData.date,
-      baseIncome:
-        propertie.baseIncome +
-        tempModifier -
-        electricityPrice +
-        weatherModifier,
-    };
-  });
+    const propertie = await PropertieModel.findById(req.params.id);
+    if (propertie === null) {
+        res.status(404).json({ msg: "Propertie does not exist" });
+        return;
+    }
+    let ownerName: string | undefined;
+    if (propertie.owner !== undefined) {
+        try {
+            const owner = await UserModel.findById(propertie.owner);
+            ownerName = owner?.name;
+        } catch (error) {
+            console.log("no hay user");
+        }
+    }
 
-  res.status(200).json({
-    name: propertie.name,
-    _id: propertie._id,
-    address: propertie.address,
-    price: propertie.price,
-    baseIncome: propertie.baseIncome,
-    owner: ownerName,
-    kind: propertie.kind,
-    stats: stats,
-  });
+    const today = new Date(); // Get current date
+    const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000); // Date last month
+
+    // Realiza la consulta a la base de datos
+    const weatherData = await WeatherDataModel.find({
+        date: { $gte: thirtyDaysAgo, $lte: today },
+    });
+    if (weatherData === null) {
+        res.status(500).json({ msg: "Internal error" });
+        return;
+    }
+
+    const kindResData = await KindRulesModel.findOne({
+        kind: propertie.kind,
+    });
+
+    if (kindResData === null) {
+        res.status(500).json({ msg: "Internal error" });
+        return;
+    }
+
+    interface statsDTO {
+        date: Date;
+        baseIncome: number;
+    }
+    console.log(kindResData?.MaxTemperature);
+    console.log(propertie.baseIncome);
+    const stats = weatherData.map((dayData): statsDTO => {
+        console.log(dayData.temperature);
+        //calculate the baseIncome modifier
+        let tempModifier = 0;
+        if (kindResData.MaxTemperature.value < dayData.temperature) {
+            tempModifier =
+                propertie.baseIncome * kindResData.MaxTemperature.modifier;
+        } else if (kindResData.MinTemperature.value > dayData.temperature) {
+            tempModifier =
+                propertie.baseIncome * kindResData.MinTemperature.modifier;
+        }
+        //calculate the electricity modifier
+
+        const electricityPrice =
+            kindResData.EnergyConsumption * dayData.electricity;
+        //calculate the weather modifier
+        let weatherModifier = 0;
+        switch (dayData.state) {
+            case "sunny":
+                weatherModifier =
+                    propertie.baseIncome * kindResData.Weather.sunny;
+                break;
+            case "cloudy":
+                weatherModifier =
+                    propertie.baseIncome * kindResData.Weather.cloudy;
+                break;
+            case "rainy":
+                weatherModifier =
+                    propertie.baseIncome * kindResData.Weather.rainy;
+                break;
+
+            default:
+                break;
+        }
+
+        return {
+            date: dayData.date,
+            baseIncome:
+                propertie.baseIncome +
+                tempModifier -
+                electricityPrice +
+                weatherModifier,
+        };
+    });
+
+    res.status(200).json({
+        name: propertie.name,
+        _id: propertie._id,
+        address: propertie.address,
+        price: propertie.price,
+        baseIncome: propertie.baseIncome,
+        owner: ownerName,
+        kind: propertie.kind,
+        stats: stats,
+    });
 };
 
 /**
@@ -285,35 +289,35 @@ const getPropertie = async (req: Request, res: Response) => {
  */
 
 const getPropertieRules = async (req: Request, res: Response) => {
-  const propertieId = req.params.id;
-  //check propertie id was provided
-  if (propertieId === undefined) {
-    res.status(404).json({
-      message: "Not found, propertie id is required",
-    });
-    return;
-  }
+    const propertieId = req.params.id;
+    //check propertie id was provided
+    if (propertieId === undefined) {
+        res.status(404).json({
+            message: "Not found, propertie id is required",
+        });
+        return;
+    }
 
-  const propertie = await PropertieModel.findById(propertieId);
-  if (propertie === null) {
-    res.status(404).json({
-      message: "Not found, propertie does not exist",
-    });
-    return;
-  }
+    const propertie = await PropertieModel.findById(propertieId);
+    if (propertie === null) {
+        res.status(404).json({
+            message: "Not found, propertie does not exist",
+        });
+        return;
+    }
 
-  try {
-    const rules = await KindRulesModel.findOne({
-      kind: propertie?.kind,
-    });
-    console.log(rules);
+    try {
+        const rules = await KindRulesModel.findOne({
+            kind: propertie?.kind,
+        });
+        console.log(rules);
 
-    res.status(200).json(rules);
-  } catch (error) {
-    res.status(500).json({
-      message: "Propertie have not kind rules associated",
-    });
-  }
+        res.status(200).json(rules);
+    } catch (error) {
+        res.status(500).json({
+            message: "Propertie have not kind rules associated",
+        });
+    }
 };
 /**
  * @swagger
@@ -397,65 +401,67 @@ const getPropertieRules = async (req: Request, res: Response) => {
  *                   description: Mensaje de error del servidor
  */
 const propertieBuy = async (req: Request, res: Response) => {
-  interface IBody {
-    ownerId: string;
-  }
-  const propertieId = req.params.id;
-  const body: IBody = req.body;
-
-  //check propertie id was provided
-  if (propertieId === undefined) {
-    res.status(404).json({
-      message: "Not found, propertie id is required",
-    });
-    return;
-  }
-
-  //check owner id was provided
-  if (body.ownerId === undefined) {
-    res.status(400).json({
-      message: "owner id is required",
-    });
-    return;
-  }
-
-  // Iniciar una nueva sesión de MongoDB para garantizar atomicidad en todas las consultas
-
-  //validate newOwner
-
-  try {
-    const landlord = await UserModel.findById(body.ownerId);
-
-    if (landlord === null) {
-      res.status(400).json({ msg: "Wrong landlord Id" });
-      return;
+    interface IBody {
+        ownerId: string;
     }
-    const propertie = await PropertieModel.findById(propertieId);
-    if (propertie === null) {
-      res.status(404).json({ msg: "Wrong propertie Id" });
-      return;
-    }
-    if (propertie.owner !== undefined) {
-      res.status(400).json({ msg: "Propertie owned" });
-      return;
-    }
-    if (landlord.liquidity < propertie.price) {
-      res.status(400).json({ msg: "Not enought money" });
-      return;
-    }
-    const updatedPropertie = await PropertieModel.findByIdAndUpdate(
-      propertieId,
-      { owner: body.ownerId },
-      { new: true }
-    );
-    const newBalance = landlord.liquidity - propertie.price;
+    const propertieId = req.params.id;
+    const body: IBody = req.body;
 
-    await UserModel.findByIdAndUpdate(body.ownerId, { liquidity: newBalance });
-    res.status(201).json({ id: updatedPropertie?._id });
-    await collectPropertyPurchaseInfo(propertieId)
-  } catch (error: any) {
-    res.status(500).json({ msg: error.message });
-  }
+    //check propertie id was provided
+    if (propertieId === undefined) {
+        res.status(404).json({
+            message: "Not found, propertie id is required",
+        });
+        return;
+    }
+
+    //check owner id was provided
+    if (body.ownerId === undefined) {
+        res.status(400).json({
+            message: "owner id is required",
+        });
+        return;
+    }
+
+    // Iniciar una nueva sesión de MongoDB para garantizar atomicidad en todas las consultas
+
+    //validate newOwner
+
+    try {
+        const landlord = await UserModel.findById(body.ownerId);
+
+        if (landlord === null) {
+            res.status(400).json({ msg: "Wrong landlord Id" });
+            return;
+        }
+        const propertie = await PropertieModel.findById(propertieId);
+        if (propertie === null) {
+            res.status(404).json({ msg: "Wrong propertie Id" });
+            return;
+        }
+        if (propertie.owner !== undefined) {
+            res.status(400).json({ msg: "Propertie owned" });
+            return;
+        }
+        if (landlord.liquidity < propertie.price) {
+            res.status(400).json({ msg: "Not enought money" });
+            return;
+        }
+        const updatedPropertie = await PropertieModel.findByIdAndUpdate(
+            propertieId,
+            { owner: body.ownerId },
+            { new: true }
+        );
+        const newBalance = landlord.liquidity - propertie.price;
+
+        await UserModel.findByIdAndUpdate(body.ownerId, {
+            liquidity: newBalance,
+        });
+        res.status(201).json({ id: updatedPropertie?._id });
+        //await collectPropertyPurchaseInfo(propertieId);
+    } catch (error: any) {
+        res.status(500).json({ msg: error.message });
+    }
 };
 
 export { getPropertieList, getPropertie, getPropertieRules, propertieBuy };
