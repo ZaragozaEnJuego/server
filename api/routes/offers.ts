@@ -8,8 +8,8 @@ import {
 const router = Router();
 
 router
-    .get("/negotiation/offerer/:id", getOffererOffers)
-    .get("/negotiation/owner/:id", getOwnerOffers)
-    .post("/negotiation", createOffer);
+    .get("/offerer/:id", getOffererOffers)
+    .get("/owner/:id", getOwnerOffers)
+    .post("/", createOffer);
 
 export default router;

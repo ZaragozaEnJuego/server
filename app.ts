@@ -4,6 +4,7 @@ import propertiesRouter from "./api/routes/properties";
 import usersRouter from "./api/routes/users";
 import authRouter from "./api/routes/auth";
 import statsRouter from "./api/routes/stats";
+import offerRouter from "./api/routes/offers";
 import middlewareAuth from "./api/controllers/middlewareAuth";
 import cron from "node-cron";
 import logger from "./api/controllers/logger";
@@ -102,5 +103,6 @@ if (process.env.NODE_ENV === "production") {
 app.use("/properties", propertiesRouter);
 app.use("/users", usersRouter);
 app.use("/weather", statsRouter);
+app.use("/negotiation", offerRouter);
 
 export default app;
