@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import UserModel from "../../api/models/users"; // importa tu modelo de Mongoose
 import { getUser, findOrCreateUser } from "../../api/controllers/users";
 import mongoose from "mongoose";
+import PropertieModel from "../../api/models/properties";
 
 jest.mock("../../api/models/users"); // Mockeamos el modelo
 
@@ -20,8 +21,21 @@ describe("getUser", () => {
   it("should return the user when a valid id is provided", async () => {
     // Define el objeto Request con un id válido
     req.params = { id: "6446b7e5415c3073bd604f02" };
+    const expectedProperties = [
+      { id: 1, name: "Property 1" },
+      { id: 2, name: "Property 2" },
+      { id: 3, name: "Property 3" },
+    ];
 
     const expectedUser = {
+      id: "6446b7e5415c3073bd604f02",
+      name: "Ismael Penacho",
+      mail: "774572@unizar.es",
+      liquidity: 10000,
+      properties: expectedProperties,
+    };
+
+    const savedUser = {
       name: "Ismael Penacho",
       _id: "6446b7e5415c3073bd604f02",
       liquidity: 10000,
@@ -30,7 +44,10 @@ describe("getUser", () => {
     };
 
     const UserModelpy = jest.spyOn(UserModel, "findById");
-    UserModelpy.mockResolvedValue(expectedUser);
+    UserModelpy.mockResolvedValue(savedUser);
+    jest
+      .spyOn(PropertieModel, "find")
+      .mockResolvedValueOnce(expectedProperties);
 
     // Crea una solicitud con un parámetro de id válido
 
@@ -43,13 +60,7 @@ describe("getUser", () => {
 
     // Comprueba que la respuesta tiene el código de estado y los datos de propiedad esperados
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith({
-      name: expectedUser.name,
-      _id: expectedUser._id,
-      liquidity: expectedUser.liquidity,
-      mail: expectedUser.mail,
-      admin: expectedUser.admin,
-    });
+    expect(res.json).toHaveBeenCalledWith(expectedUser);
   });
 
   it("should return a 400 error when no id is provided", async () => {
