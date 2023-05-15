@@ -215,7 +215,22 @@ const createOffer = async (req: Request, res: Response) => {
     }
 };
 
+const deleteOffer = async (req: Request, res: Response) => {
+    const id = req.params.id;
+    if (id === undefined || !mongoose.isObjectIdOrHexString(id)) {
+        res.status(400).json({ msg: "No id provided" });
+        return;
+    }
+
+    try {
+        await OfferModel.findByIdAndDelete(id);
+        res.status(201).json({ id: id });
+    } catch (error: any) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
 //const deleteOffer
 // acceptOffer?? / declineOffer?? --> Pueden ser simplemente eliminadas y estos eventos gestionarlos solo en Frontend
 
-export { getOffererOffers, getOwnerOffers, createOffer };
+export { getOffererOffers, getOwnerOffers, createOffer, deleteOffer };
