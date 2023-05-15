@@ -10,6 +10,8 @@ import logger from "./api/controllers/logger";
 import { setWeatherData } from "./api/controllers/stats";
 import { Request, Response, NextFunction } from "express";
 import adminStatsRouter from "./api/routes/statsAdmin";
+import adminRouter from "./api/routes/admin";
+import offerRouter from "./api/routes/offers";
 
 //FOR TESTING LOOK
 //https://dev.to/nathan_sheryak/how-to-test-a-typescript-express-api-with-jest-for-dummies-like-me-4epd
@@ -104,5 +106,8 @@ app.use("/properties", propertiesRouter);
 app.use("/users", usersRouter);
 app.use("/adminstats", adminStatsRouter)
 app.use("/weather", statsRouter);
+app.use("/admin", adminRouter);
+app.use("/offers", offerRouter)
+
 
 export default app;

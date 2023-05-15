@@ -2,15 +2,13 @@ import { Router } from "express";
 import {
   getOffererOffers,
   getOwnerOffers,
-  getOffer,
 } from "../controllers/offers";
 
-const router = Router();
+const offerRouter = Router();
 
-router
+offerRouter
   .get("/negotiation/:id", getOffererOffers)
   .get("/negotiation/:id", getOwnerOffers)
-  .get("/negotiation/:id", getOffer);
 //.post("/negotiation", createOffer) queda pendiente por el momento
 
-export default router;
+export default offerRouter;
