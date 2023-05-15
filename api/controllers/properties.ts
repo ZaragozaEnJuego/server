@@ -448,7 +448,7 @@ const propertieBuy = async (req: Request, res: Response) => {
       { new: true }
     );
     const newBalance = landlord.liquidity - propertie.price;
-
+    res.status(201).json({ id: updatedPropertie?._id });
     await UserModel.findByIdAndUpdate(body.ownerId, { liquidity: newBalance });
     console.log("procede a registrar la compra")
     await PropertyPurchaseDataModel.create({
@@ -456,7 +456,6 @@ const propertieBuy = async (req: Request, res: Response) => {
       kind: propertie.kind,
       date: new Date()
   })
-    res.status(201).json({ id: updatedPropertie?._id });
   } catch (error: any) {
     res.status(500).json({ msg: error.message });
   }
