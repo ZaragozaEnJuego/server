@@ -3,6 +3,7 @@ import Offer from "../models/offers";
 import { Request, Response } from "express";
 import PropertieModel from "../models/properties";
 import OfferModel from "../models/offers";
+import UserModel from "../models/users";
 
 /**
  * @swagger
@@ -230,7 +231,66 @@ const deleteOffer = async (req: Request, res: Response) => {
     }
 };
 
+const execOffer = async (req: Request, res: Response) => {
+    const id = req.params.id;
+    if (id === undefined || !mongoose.isObjectIdOrHexString(id)) {
+        res.status(400).json({ msg: "No id provided" });
+        return;
+    }
+
+    try {
+        const offer = await OfferModel.findById(id);
+        if (offer === undefined || offer === null) {
+            res.status(404).json({ msg: "The offer does not exist" });
+            return;
+        }
+
+        const offerer = await UserModel.findById(offer.offerer);
+        if (offerer === undefined || offerer === null) {
+            res.status(404).json({ msg: "Offerer not found" });
+            return;
+        }
+        const newOffererBalance = offerer.liquidity - offer.amount;
+        if (newOffererBalance < 0) {
+            res.status(404).json({ msg: "Not enought balance" });
+            return;
+        }
+        await UserModel.findByIdAndUpdate(offer.offerer, {
+            liquidity: newOffererBalance,
+        });
+
+        await PropertieModel.findByIdAndUpdate(
+            offer.property,
+            { owner: offer.offerer },
+            { new: true }
+        );
+
+        const owner = await UserModel.findById(offer.owner);
+        if (owner === undefined || owner === null) {
+            res.status(404).json({ msg: "Owner not found" });
+            return;
+        }
+        const newOwnerBalance = owner.liquidity + offer.amount;
+        await UserModel.findByIdAndUpdate(offer.owner, {
+            liquidity: newOwnerBalance,
+        });
+        const propId = offer.property;
+        await OfferModel.deleteMany({ property: offer.property });
+
+        res.status(201).json({ id: id });
+        //collectPropertyPurchaseInfo(offer.property)
+    } catch (error: any) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
 //const deleteOffer
 // acceptOffer?? / declineOffer?? --> Pueden ser simplemente eliminadas y estos eventos gestionarlos solo en Frontend
 
-export { getOffererOffers, getOwnerOffers, createOffer, deleteOffer };
+export {
+    getOffererOffers,
+    getOwnerOffers,
+    createOffer,
+    deleteOffer,
+    execOffer,
+};
