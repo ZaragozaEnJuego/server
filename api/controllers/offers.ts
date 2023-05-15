@@ -8,7 +8,7 @@ import PropertieModel from "../models/properties";
 const getOffererOffers = async (req: Request, res: Response) => {
   await OfferModel.find({ offerer: req.params.offerer })
     .then((offer) =>
-      offer == null
+      offer === null
         ? res.status(404).json({ message: "Offers not found" })
         : res.status(200).json(offer)
     )
@@ -65,10 +65,10 @@ const createOffer = async (req: Request, res: Response) => {
     return;
   }
 
-  if (body.amount === undefined) {
-    res.status(400).json({ msg: "Required amount of money" });
+  if (isNaN(body.amount) || body.amount < 0) {
+    res.status(400).json({ msg: "Amount must be a positive number" });
     return;
-  }
+  }  
 
   await OfferModel.create({
     property: body.property,
