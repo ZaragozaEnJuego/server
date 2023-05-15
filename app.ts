@@ -4,12 +4,14 @@ import propertiesRouter from "./api/routes/properties";
 import usersRouter from "./api/routes/users";
 import authRouter from "./api/routes/auth";
 import statsRouter from "./api/routes/stats";
+import offerRouter from "./api/routes/offers";
 import middlewareAuth from "./api/controllers/middlewareAuth";
 import cron from "node-cron";
 import logger from "./api/controllers/logger";
 import { setWeatherData } from "./api/controllers/stats";
 import { Request, Response, NextFunction } from "express";
 import adminStatsRouter from "./api/routes/statsAdmin";
+import adminRouter from "./api/routes/admin";
 
 //FOR TESTING LOOK
 //https://dev.to/nathan_sheryak/how-to-test-a-typescript-express-api-with-jest-for-dummies-like-me-4epd
@@ -102,7 +104,9 @@ if (process.env.NODE_ENV === "production") {
 
 app.use("/properties", propertiesRouter);
 app.use("/users", usersRouter);
+app.use("/negotiation", offerRouter)
 app.use("/adminstats", adminStatsRouter)
 app.use("/weather", statsRouter);
+app.use("/admin", adminRouter)
 
 export default app;

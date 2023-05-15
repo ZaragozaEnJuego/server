@@ -3,14 +3,19 @@ import {
   getOffererOffers,
   getOwnerOffers,
   getOffer,
+  createOffer,
+  execOffer,
+  deleteOffer
 } from "../controllers/offers";
 
-const router = Router();
+const offerRouter = Router();
 
-router
-  .get("/negotiation/:id", getOffererOffers)
-  .get("/negotiation/:id", getOwnerOffers)
-  .get("/negotiation/:id", getOffer);
-//.post("/negotiation", createOffer) queda pendiente por el momento
+offerRouter
+  .get("/:id/offerer", getOffererOffers)
+  .get("/:id/owner", getOwnerOffers)
+  .get("/:id", getOffer)
+  .post("/create", createOffer)
+  .post("/:id/execute", execOffer)
+  .delete("/:id/delete", deleteOffer)
 
-export default router;
+export default offerRouter
