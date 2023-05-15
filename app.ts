@@ -108,7 +108,6 @@ app.use("/negotiation", offerRouter)
 app.use("/adminstats", adminStatsRouter)
 app.use("/weather", statsRouter);
 app.use("/admin", adminRouter);
-app.use("/offers", offerRouter)
 
 
 export default app;
