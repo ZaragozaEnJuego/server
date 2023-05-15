@@ -8,6 +8,7 @@ const getUserList = (req: Request, res: Response) => {
 };
 
 const updateAccess = (req: Request, res: Response) => {
+  console.log("Comienzo a registrar la compra")
   if (req.params.id === undefined) {
     res.status(400).json({
       message: "user id is required",
@@ -26,7 +27,7 @@ const updateAccess = (req: Request, res: Response) => {
 
   Users.findByIdAndUpdate(
     req.params.id,
-    { access },
+    { access: access },
     { new: true } // devuelve el usuario actualizado
   )
     .then((user) =>

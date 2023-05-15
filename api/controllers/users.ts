@@ -78,6 +78,7 @@ const findOrCreateUser = (name: string, mail: string, admin: boolean) => {
             name: name,
             liquidity: 4000000,
             mail: mail,
+            access: true,
             admin: admin,
           })
             .then((newUser) => {

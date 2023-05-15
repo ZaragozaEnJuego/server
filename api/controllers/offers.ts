@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import OfferModel from "../models/offers";
 import UserModel from "../models/users";
 import PropertieModel from "../models/properties";
+import PropertyPurchaseDataModel from "../models/statsAdmin";
 
 const getOffererOffers = async (req: Request, res: Response) => {
   await OfferModel.find({ offerer: req.params.offerer })
@@ -77,13 +78,13 @@ const execOffer = async (req: Request, res: Response) => {
 
   try {
     const offer = await OfferModel.findById(id);
-    if (offer === null) {
+    if (offer === undefined || offer === null) {
       res.status(404).json({ msg: "The offer does not exist" });
       return;
     }
 
     const offerer = await UserModel.findById(offer.offerer);
-    if (offerer === null) {
+    if (offerer === undefined || offerer === null) {
       res.status(404).json({ msg: "Offerer not found" });
       return;
     }
@@ -99,7 +100,7 @@ const execOffer = async (req: Request, res: Response) => {
     );
 
     const owner = await UserModel.findById(offer.owner);
-    if (owner === null) {
+    if (owner === undefined || owner === null) {
       res.status(404).json({ msg: "Owner not found" });
       return;
     }
@@ -107,6 +108,16 @@ const execOffer = async (req: Request, res: Response) => {
     await UserModel.findByIdAndUpdate(offer.owner, {
       liquidity: newOwnerBalance,
     });
+    const propertie = await PropertieModel.findById(offer.property)
+    if (propertie === undefined || propertie === null) {
+      res.status(404).json({ msg: "Property not found" });
+      return;
+    }
+    await PropertyPurchaseDataModel.create({
+      property: offer.property,
+      kind: propertie.kind,
+      date: new Date()
+  })
     res.status(201).json({ id: id });
     //collectPropertyPurchaseInfo(offer.property)
   } catch (error: any) {
