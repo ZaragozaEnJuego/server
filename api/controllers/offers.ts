@@ -52,8 +52,16 @@ import OfferModel from "../models/offers";
  *           description: Some server error
  */
 const getOffererOffers = async (req: Request, res: Response) => {
+    const id = req.params.id;
+    //check propertie id was provided
+    if (id === undefined) {
+        res.status(404).json({
+            message: "Not found, offerer id is required",
+        });
+        return;
+    }
     try {
-        const offers = await Offer.find({ offerer: req.body.owner });
+        const offers = await Offer.find({ offerer: id });
         res.status(200).json(offers);
     } catch (error) {
         res.status(500).json(error);
@@ -108,8 +116,16 @@ const getOffererOffers = async (req: Request, res: Response) => {
  *           description: Some server error
  */
 const getOwnerOffers = async (req: Request, res: Response) => {
+    const id = req.params.id;
+    //check propertie id was provided
+    if (id === undefined) {
+        res.status(404).json({
+            message: "Not found, owner id is required",
+        });
+        return;
+    }
     try {
-        const offers = await Offer.find({ owner: req.body.owner });
+        const offers = await Offer.find({ owner: id });
         res.status(200).json(offers);
     } catch (error) {
         res.status(500).json(error);
@@ -187,12 +203,14 @@ const createOffer = async (req: Request, res: Response) => {
     }
     try {
         const property = await PropertieModel.findById(body.property);
-        OfferModel.create({
+        const offer = await OfferModel.create({
             property: body.property,
             owner: property?.owner,
+            offerer: body.offerer,
             amount: body.amount,
         });
-    } catch (error) {
+        res.status(201).json({ id: offer?._id });
+    } catch (error: any) {
         res.status(500).json(error);
     }
 };
