@@ -458,7 +458,7 @@ const propertieBuy = async (req: Request, res: Response) => {
             liquidity: newBalance,
         });
         res.status(201).json({ id: updatedPropertie?._id });
-        await collectPropertyPurchaseInfo(propertieId);
+        //await collectPropertyPurchaseInfo(propertieId);
     } catch (error: any) {
         res.status(500).json({ msg: error.message });
     }
