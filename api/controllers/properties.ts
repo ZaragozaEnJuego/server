@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import PropertieModel from "../models/properties";
 import UserModel from "../models/users";
 import { log } from "console";
+import { collectPropertyPurchaseInfo } from "./statsAdmin";
 
 /**
  * @swagger
@@ -451,6 +452,7 @@ const propertieBuy = async (req: Request, res: Response) => {
 
     await UserModel.findByIdAndUpdate(body.ownerId, { liquidity: newBalance });
     res.status(201).json({ id: updatedPropertie?._id });
+    await collectPropertyPurchaseInfo(propertieId)
   } catch (error: any) {
     res.status(500).json({ msg: error.message });
   }

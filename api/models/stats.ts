@@ -1,4 +1,5 @@
 import mongoose, { Model, Schema } from "mongoose";
+import { Kind } from "./kindRules";
 
 export type State = "sunny" | "cloudy" | "rainy" ;
 
