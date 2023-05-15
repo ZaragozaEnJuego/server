@@ -138,10 +138,10 @@ const getOffererOffers = async (req: Request, res: Response) => {
  */
 const getOwnerOffers = async (req: Request, res: Response) => {
   const id = req.params.id;
-  //check propertie id was provided
+  // Verificar si se proporcionó el ID de offerer
   if (id === undefined) {
     res.status(404).json({
-      message: "Not found, owner id is required",
+      message: "Not found, offerer ID is required",
     });
     return;
   }
@@ -154,14 +154,21 @@ const getOwnerOffers = async (req: Request, res: Response) => {
       amount: number;
     }
     const offers: OfferDT[] = await Offer.find({ offerer: id });
-    const offersWithName = offers.map(async (offer, k) => {
-      try {
-        const offerer = await UserModel.findById(offer.offerer);
-        offer.offerer = offerer?.name ?? "";
-      } catch (error) {
-        offer.offerer = "";
-      }
+
+    // Obtener los nombres de los propietarios usando Promise.all()
+    const offererPromises = offers.map((offer: OfferDT) => {
+      return UserModel.findById(offer.offerer).then(
+        (offerer) => offerer?.name ?? ""
+      );
     });
+    const offerers = await Promise.all(offererPromises);
+
+    // Asignar los nombres de los propietarios a los objetos de oferta correspondientes
+    const offersWithName = offers.map((offer: OfferDT, index) => {
+      offer.offerer = offerers[index];
+      return offer;
+    });
+
     res.status(200).json(offersWithName);
   } catch (error) {
     res.status(500).json(error);
