@@ -1,6 +1,8 @@
-import mongoose from "mongoose"
-import Offer from "../models/offers"
-import { Request, Response } from "express"
+import mongoose from "mongoose";
+import Offer from "../models/offers";
+import { Request, Response } from "express";
+import PropertieModel from "../models/properties";
+import OfferModel from "../models/offers";
 
 /**
  * @swagger
@@ -51,9 +53,13 @@ import { Request, Response } from "express"
  */
 const getOffererOffers = (req: Request, res: Response) => {
     Offer.find({ offerer: req.body.offerer })
-    .then((offer) => offer == null ? res.status(404).json({ message: "Offer not found" }) : res.status(200).json(offer))
-    .catch((err) => res.status(500).json(err))
-}
+        .then((offer) =>
+            offer == null
+                ? res.status(404).json({ message: "Offer not found" })
+                : res.status(200).json(offer)
+        )
+        .catch((err) => res.status(500).json(err));
+};
 
 /**
  * @swagger
@@ -102,70 +108,14 @@ const getOffererOffers = (req: Request, res: Response) => {
  *        500:
  *           description: Some server error
  */
-const getOwnerOffers = (req: Request, res: Response) => {
-  Offer.find({ owner: req.body.owner })
-  .then((offer) => offer == null ? res.status(404).json({ message: "Offer not found" }) : res.status(200).json(offer))
-  .catch((err) => res.status(500).json(err))
-}
-
-/**
- * @swagger
- * tags:
- *    name: Offers
- *    description: The offers managing API
- * /offers/{id}::
- *    get:
- *      summary: Return the offer with a specific id
- *      tags: [Offers]
- *      parameters:
- *        - in: path
- *          name: id
- *          schema:
- *             type: string
- *          required: true
- *          description: The offer id
- *      responses:
- *        200:
- *          description: The offer with the specific id
- *          content:
- *              application/json:
- *                schema:
- *                  type: object
- *                  properties:
- *                    _id:
- *                      type: string
- *                      description: The auto-generated offer id
- *                      nullable: true
- *                    property:
- *                      type: string
- *                      description: The id of offered property
- *                    offerer:
- *                      type: string
- *                      description: The id of offerer user
- *                    owner:
- *                      type: string
- *                      description: The id of owner user
- *                    amount:
- *                      type: number
- *                      description: The involved amount of money in the offer
- *        404:
- *           description: Offer not found
- *        500:
- *           description: Some server error
- */
-const getOffer = (req: Request, res: Response) => {
-    Offer.findById(req.params.id)
-      .then((offer) => {
-        if (offer === null) {
-          res.status(404).json({
-            message: "Offer not found",
-          });
-        } else {
-          res.status(200).json(offer);
-        }
-      })
-      .catch((err) => res.status(500).json(err));
-}
+const getOwnerOffers = async (req: Request, res: Response) => {
+    try {
+        const offers = await Offer.find({ owner: req.body.owner });
+        res.status(200).json(offers);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+};
 
 /**
  * @swagger
@@ -216,23 +166,39 @@ const getOffer = (req: Request, res: Response) => {
  *        400:
  *           description: Error trying to create an offer
  */
-const createOffer = (req: Request, res: Response) => {
-    Offer.create({
-        property: "Id_property",
-        offerer: "ID_landlord_offerer",
-        owner: "ID_landlord_owner",
-        amount: 100000
-    })
-    .then((offer) => {
-        res.status(201).json(offer);
-      })
-      .catch((err) => {
-        res.status(400).json(err);
-      });
-}
+const createOffer = async (req: Request, res: Response) => {
+    interface CreateOfferDTO {
+        property: string;
+        offerer: string;
+        amount: number;
+    }
+    const body: CreateOfferDTO = req.body;
+    if (body.property === undefined) {
+        res.status(400).json({ msg: "Required property id" });
+        return;
+    }
+    if (body.offerer === undefined) {
+        res.status(400).json({ msg: "Required offerer id" });
+        return;
+    }
+
+    if (body.amount === undefined || body.amount < 0) {
+        res.status(400).json({ msg: "Amount must be a positive number" });
+        return;
+    }
+    try {
+        const property = await PropertieModel.findById(body.property);
+        OfferModel.create({
+            property: body.property,
+            owner: property?.owner,
+            amount: body.amount,
+        });
+    } catch (error) {
+        res.status(500).json(error);
+    }
+};
 
 //const deleteOffer
 // acceptOffer?? / declineOffer?? --> Pueden ser simplemente eliminadas y estos eventos gestionarlos solo en Frontend
 
-export { getOffererOffers, getOwnerOffers, getOffer, createOffer }
-
+export { getOffererOffers, getOwnerOffers, createOffer };
