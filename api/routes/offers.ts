@@ -1,5 +1,8 @@
 import { Router } from "express";
 import {
+  createOffer,
+  deleteOffer,
+  execOffer,
   getOffererOffers,
   getOwnerOffers,
 } from "../controllers/offers";
@@ -7,8 +10,10 @@ import {
 const offerRouter = Router();
 
 offerRouter
-  .get("/negotiation/:id", getOffererOffers)
-  .get("/negotiation/:id", getOwnerOffers)
-//.post("/negotiation", createOffer) queda pendiente por el momento
+  .get("/:id/offerer", getOffererOffers)
+  .get("/:id/owner", getOwnerOffers)
+  .post("/create", createOffer)
+  .post("/:id/execute", execOffer)
+  .delete("/:id/delete", deleteOffer)
 
-export default offerRouter;
+export default offerRouter
