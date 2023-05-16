@@ -323,7 +323,7 @@ const execOffer = async (req: Request, res: Response) => {
         await OfferModel.deleteMany({ property: offer.property });
 
         res.status(201).json({ id: id });
-        collectPropertyPurchaseInfo(propId);
+        await collectPropertyPurchaseInfo(propId);
     } catch (error: any) {
         res.status(500).json({ msg: error.message });
     }
