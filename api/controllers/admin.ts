@@ -2,6 +2,7 @@ import Users from "../models/users";
 import { Request, Response, response } from "express";
 import UserModel from "../models/users";
 import PropertyPurchaseDataModel from "../models/statsAdmin";
+import PropertieModel from "../models/properties";
 
 /**
  * @swagger
@@ -206,4 +207,22 @@ const transactionPerDay = async (req: Request, res: Response) => {
     res.json(transactionsPerDay);
 };
 
-export { getUserList, updateAccess, newUsersPerDay, transactionPerDay };
+const collectPropertyPurchaseInfo = async (property: string) => {
+    const propertie = await PropertieModel.findById(property);
+    if (propertie !== null) {
+        const kind = propertie.kind;
+        await PropertyPurchaseDataModel.create({
+            property: property,
+            kind: kind,
+            date: new Date(),
+        });
+    }
+};
+
+export {
+    getUserList,
+    updateAccess,
+    newUsersPerDay,
+    transactionPerDay,
+    collectPropertyPurchaseInfo,
+};

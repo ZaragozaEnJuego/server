@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 import PropertieModel from "../models/properties";
 import OfferModel from "../models/offers";
 import UserModel from "../models/users";
+import { collectPropertyPurchaseInfo } from "./admin";
 
 /**
  * @swagger
@@ -53,40 +54,42 @@ import UserModel from "../models/users";
  *           description: Some server error
  */
 const getOffererOffers = async (req: Request, res: Response) => {
-  const id = req.params.id;
-  // Verificar si se proporcionó el ID de offerer
-  if (id === undefined) {
-    res.status(404).json({
-      message: "Not found, offerer ID is required",
-    });
-    return;
-  }
-  try {
-    interface OfferDT {
-      _id?: string;
-      property: string;
-      offerer: string;
-      owner: string;
-      amount: number;
+    const id = req.params.id;
+    // Verificar si se proporcionó el ID de offerer
+    if (id === undefined) {
+        res.status(404).json({
+            message: "Not found, offerer ID is required",
+        });
+        return;
     }
-    const offers: OfferDT[] = await Offer.find({ offerer: id });
+    try {
+        interface OfferDT {
+            _id?: string;
+            property: string;
+            offerer: string;
+            owner: string;
+            amount: number;
+        }
+        const offers: OfferDT[] = await Offer.find({ offerer: id });
 
-    // Obtener los nombres de los propietarios usando Promise.all()
-    const ownerPromises = offers.map((offer: OfferDT) => {
-      return UserModel.findById(offer.owner).then((owner) => owner?.name ?? "");
-    });
-    const owners = await Promise.all(ownerPromises);
+        // Obtener los nombres de los propietarios usando Promise.all()
+        const ownerPromises = offers.map((offer: OfferDT) => {
+            return UserModel.findById(offer.owner).then(
+                (owner) => owner?.name ?? ""
+            );
+        });
+        const owners = await Promise.all(ownerPromises);
 
-    // Asignar los nombres de los propietarios a los objetos de oferta correspondientes
-    const offersWithName = offers.map((offer: OfferDT, index) => {
-      offer.owner = owners[index];
-      return offer;
-    });
+        // Asignar los nombres de los propietarios a los objetos de oferta correspondientes
+        const offersWithName = offers.map((offer: OfferDT, index) => {
+            offer.owner = owners[index];
+            return offer;
+        });
 
-    res.status(200).json(offersWithName);
-  } catch (error) {
-    res.status(500).json(error);
-  }
+        res.status(200).json(offersWithName);
+    } catch (error) {
+        res.status(500).json(error);
+    }
 };
 
 /**
@@ -137,42 +140,42 @@ const getOffererOffers = async (req: Request, res: Response) => {
  *           description: Some server error
  */
 const getOwnerOffers = async (req: Request, res: Response) => {
-  const id = req.params.id;
-  // Verificar si se proporcionó el ID de offerer
-  if (id === undefined) {
-    res.status(404).json({
-      message: "Not found, offerer ID is required",
-    });
-    return;
-  }
-  try {
-    interface OfferDT {
-      _id?: string;
-      property: string;
-      offerer: string;
-      owner: string;
-      amount: number;
+    const id = req.params.id;
+    // Verificar si se proporcionó el ID de offerer
+    if (id === undefined) {
+        res.status(404).json({
+            message: "Not found, offerer ID is required",
+        });
+        return;
     }
-    const offers: OfferDT[] = await Offer.find({ owner: id });
+    try {
+        interface OfferDT {
+            _id?: string;
+            property: string;
+            offerer: string;
+            owner: string;
+            amount: number;
+        }
+        const offers: OfferDT[] = await Offer.find({ owner: id });
 
-    // Obtener los nombres de los propietarios usando Promise.all()
-    const offererPromises = offers.map((offer: OfferDT) => {
-      return UserModel.findById(offer.offerer).then(
-        (offerer) => offerer?.name ?? ""
-      );
-    });
-    const offerers = await Promise.all(offererPromises);
+        // Obtener los nombres de los propietarios usando Promise.all()
+        const offererPromises = offers.map((offer: OfferDT) => {
+            return UserModel.findById(offer.offerer).then(
+                (offerer) => offerer?.name ?? ""
+            );
+        });
+        const offerers = await Promise.all(offererPromises);
 
-    // Asignar los nombres de los propietarios a los objetos de oferta correspondientes
-    const offersWithName = offers.map((offer: OfferDT, index) => {
-      offer.offerer = offerers[index];
-      return offer;
-    });
+        // Asignar los nombres de los propietarios a los objetos de oferta correspondientes
+        const offersWithName = offers.map((offer: OfferDT, index) => {
+            offer.offerer = offerers[index];
+            return offer;
+        });
 
-    res.status(200).json(offersWithName);
-  } catch (error) {
-    res.status(500).json(error);
-  }
+        res.status(200).json(offersWithName);
+    } catch (error) {
+        res.status(500).json(error);
+    }
 };
 
 /**
@@ -225,114 +228,114 @@ const getOwnerOffers = async (req: Request, res: Response) => {
  *           description: Error trying to create an offer
  */
 const createOffer = async (req: Request, res: Response) => {
-  interface CreateOfferDTO {
-    property: string;
-    offerer: string;
-    amount: number;
-  }
-  const body: CreateOfferDTO = req.body;
-  if (body.property === undefined) {
-    res.status(400).json({ msg: "Required property id" });
-    return;
-  }
-  if (body.offerer === undefined) {
-    res.status(400).json({ msg: "Required offerer id" });
-    return;
-  }
+    interface CreateOfferDTO {
+        property: string;
+        offerer: string;
+        amount: number;
+    }
+    const body: CreateOfferDTO = req.body;
+    if (body.property === undefined) {
+        res.status(400).json({ msg: "Required property id" });
+        return;
+    }
+    if (body.offerer === undefined) {
+        res.status(400).json({ msg: "Required offerer id" });
+        return;
+    }
 
-  if (body.amount === undefined || body.amount < 0) {
-    res.status(400).json({ msg: "Amount must be a positive number" });
-    return;
-  }
-  try {
-    const property = await PropertieModel.findById(body.property);
-    const offer = await OfferModel.create({
-      property: body.property,
-      owner: property?.owner,
-      offerer: body.offerer,
-      amount: body.amount,
-    });
-    res.status(201).json({ id: offer?._id });
-  } catch (error: any) {
-    res.status(500).json(error);
-  }
+    if (body.amount === undefined || body.amount < 0) {
+        res.status(400).json({ msg: "Amount must be a positive number" });
+        return;
+    }
+    try {
+        const property = await PropertieModel.findById(body.property);
+        const offer = await OfferModel.create({
+            property: body.property,
+            owner: property?.owner,
+            offerer: body.offerer,
+            amount: body.amount,
+        });
+        res.status(201).json({ id: offer?._id });
+    } catch (error: any) {
+        res.status(500).json(error);
+    }
 };
 
 const deleteOffer = async (req: Request, res: Response) => {
-  const id = req.params.id;
-  if (id === undefined || !mongoose.isObjectIdOrHexString(id)) {
-    res.status(400).json({ msg: "No id provided" });
-    return;
-  }
+    const id = req.params.id;
+    if (id === undefined || !mongoose.isObjectIdOrHexString(id)) {
+        res.status(400).json({ msg: "No id provided" });
+        return;
+    }
 
-  try {
-    await OfferModel.findByIdAndDelete(id);
-    res.status(201).json({ id: id });
-  } catch (error: any) {
-    res.status(500).json({ msg: error.message });
-  }
+    try {
+        await OfferModel.findByIdAndDelete(id);
+        res.status(201).json({ id: id });
+    } catch (error: any) {
+        res.status(500).json({ msg: error.message });
+    }
 };
 
 const execOffer = async (req: Request, res: Response) => {
-  const id = req.params.id;
-  if (id === undefined || !mongoose.isObjectIdOrHexString(id)) {
-    res.status(400).json({ msg: "No id provided" });
-    return;
-  }
-
-  try {
-    const offer = await OfferModel.findById(id);
-    if (offer === undefined || offer === null) {
-      res.status(404).json({ msg: "The offer does not exist" });
-      return;
+    const id = req.params.id;
+    if (id === undefined || !mongoose.isObjectIdOrHexString(id)) {
+        res.status(400).json({ msg: "No id provided" });
+        return;
     }
 
-    const offerer = await UserModel.findById(offer.offerer);
-    if (offerer === undefined || offerer === null) {
-      res.status(404).json({ msg: "Offerer not found" });
-      return;
-    }
-    const newOffererBalance = offerer.liquidity - offer.amount;
-    if (newOffererBalance < 0) {
-      res.status(404).json({ msg: "Not enought balance" });
-      return;
-    }
-    await UserModel.findByIdAndUpdate(offer.offerer, {
-      liquidity: newOffererBalance,
-    });
+    try {
+        const offer = await OfferModel.findById(id);
+        if (offer === undefined || offer === null) {
+            res.status(404).json({ msg: "The offer does not exist" });
+            return;
+        }
 
-    await PropertieModel.findByIdAndUpdate(
-      offer.property,
-      { owner: offer.offerer },
-      { new: true }
-    );
+        const offerer = await UserModel.findById(offer.offerer);
+        if (offerer === undefined || offerer === null) {
+            res.status(404).json({ msg: "Offerer not found" });
+            return;
+        }
+        const newOffererBalance = offerer.liquidity - offer.amount;
+        if (newOffererBalance < 0) {
+            res.status(404).json({ msg: "Not enought balance" });
+            return;
+        }
+        await UserModel.findByIdAndUpdate(offer.offerer, {
+            liquidity: newOffererBalance,
+        });
 
-    const owner = await UserModel.findById(offer.owner);
-    if (owner === undefined || owner === null) {
-      res.status(404).json({ msg: "Owner not found" });
-      return;
+        await PropertieModel.findByIdAndUpdate(
+            offer.property,
+            { owner: offer.offerer },
+            { new: true }
+        );
+
+        const owner = await UserModel.findById(offer.owner);
+        if (owner === undefined || owner === null) {
+            res.status(404).json({ msg: "Owner not found" });
+            return;
+        }
+        const newOwnerBalance = owner.liquidity + offer.amount;
+        await UserModel.findByIdAndUpdate(offer.owner, {
+            liquidity: newOwnerBalance,
+        });
+        const propId = offer.property;
+        await OfferModel.deleteMany({ property: offer.property });
+
+        res.status(201).json({ id: id });
+        collectPropertyPurchaseInfo(propId);
+    } catch (error: any) {
+        res.status(500).json({ msg: error.message });
     }
-    const newOwnerBalance = owner.liquidity + offer.amount;
-    await UserModel.findByIdAndUpdate(offer.owner, {
-      liquidity: newOwnerBalance,
-    });
-    const propId = offer.property;
-    await OfferModel.deleteMany({ property: offer.property });
-
-    res.status(201).json({ id: id });
-    //collectPropertyPurchaseInfo(offer.property)
-  } catch (error: any) {
-    res.status(500).json({ msg: error.message });
-  }
 };
 
 //const deleteOffer
 // acceptOffer?? / declineOffer?? --> Pueden ser simplemente eliminadas y estos eventos gestionarlos solo en Frontend
 
 export {
-  getOffererOffers,
-  getOwnerOffers,
-  createOffer,
-  deleteOffer,
-  execOffer,
+    getOffererOffers,
+    getOwnerOffers,
+    createOffer,
+    deleteOffer,
+    execOffer,
 };
