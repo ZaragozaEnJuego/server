@@ -153,7 +153,7 @@ const getOwnerOffers = async (req: Request, res: Response) => {
       owner: string;
       amount: number;
     }
-    const offers: OfferDT[] = await Offer.find({ offerer: id });
+    const offers: OfferDT[] = await Offer.find({ owner: id });
 
     // Obtener los nombres de los propietarios usando Promise.all()
     const offererPromises = offers.map((offer: OfferDT) => {
