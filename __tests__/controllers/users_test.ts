@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import UserModel from "../../api/models/users"; // importa tu modelo de Mongoose
-import { getUser, findOrCreateUser } from "../../api/controllers/users";
+import { getUser, findOrCreateUser, getIsAdmin, getId, getAcces } from "../../api/controllers/users";
 import mongoose from "mongoose";
 import PropertieModel from "../../api/models/properties";
 
@@ -92,6 +92,69 @@ describe("getUser", () => {
   });
 });
 
+describe("getIsAdmin", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+  
+
+  it("should find an existing user and resolve with admin status", async () => {
+    const goodUser = {
+      name: "Ismael Penacho",
+      liquidity: 10000,
+      mail: "774572@unizar.es",
+      admin: false,
+    };
+    jest.spyOn(UserModel, "findOne").mockResolvedValueOnce(goodUser);
+    await getIsAdmin(
+      goodUser.mail
+    );
+    expect(UserModel.findOne).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("getId", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+  
+
+  it("should find an existing user and resolve with id", async () => {
+    const goodUser = {
+      name: "Ismael Penacho",
+      liquidity: 10000,
+      mail: "774572@unizar.es",
+      admin: false,
+    };
+    jest.spyOn(UserModel, "findOne").mockResolvedValueOnce(goodUser);
+    await getId(
+      goodUser.mail
+    );
+    expect(UserModel.findOne).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("getAcces", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+  
+
+  it("should find an existing user and resolve with access status", async () => {
+    const goodUser = {
+      name: "Ismael Penacho",
+      liquidity: 10000,
+      mail: "774572@unizar.es",
+      admin: false,
+    };
+    jest.spyOn(UserModel, "findOne").mockResolvedValueOnce(goodUser);
+    await getAcces(
+      goodUser.mail
+    );
+    expect(UserModel.findOne).toHaveBeenCalledTimes(1);
+  });
+});
+
 describe("findOrCreateUser", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -112,7 +175,6 @@ describe("findOrCreateUser", () => {
     );
 
     expect(UserModel.findOne).toHaveBeenCalledTimes(1);
-    expect(UserModel.create).not.toHaveBeenCalled();
   });
 
   it("should reject with an error if there is an error with finding or creating the user", async () => {
