@@ -48,7 +48,8 @@ import { collectPropertyPurchaseInfo } from "./admin";
 const getPropertieList = async (req: Request, res: Response) => {
     try {
         const list = await PropertieModel.find().limit(100);
-        console.log(list.length);
+        console.log(list[0].name);
+        console.log(list[0].owner);
 
         res.status(200).json(list);
     } catch (err) {

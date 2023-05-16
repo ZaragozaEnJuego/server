@@ -1,5 +1,5 @@
 import Users from "../models/users";
-import { Request, Response, response } from "express";
+import { Request, Response } from "express";
 import UserModel from "../models/users";
 import PropertyPurchaseDataModel from "../models/statsAdmin";
 import PropertieModel from "../models/properties";
