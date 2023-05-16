@@ -1,6 +1,7 @@
 import Users from "../models/users";
 import { Request, Response, response } from "express";
 import UserModel from "../models/users";
+import PropertyPurchaseDataModel from "../models/statsAdmin";
 
 /**
  * @swagger
@@ -160,4 +161,49 @@ const newUsersPerDay = async (req: Request, res: Response) => {
     res.json(usersPerDay);
 };
 
-export { getUserList, updateAccess, newUsersPerDay };
+const transactionPerDay = async (req: Request, res: Response) => {
+    const today = new Date(); // Obtener la fecha actual
+    const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000); // Fecha de hace 30 días
+
+    // Realizar la consulta a la base de datos
+    // Utilizamos aggregate para agrupar por fecha y contar los usuarios
+    const result = await PropertyPurchaseDataModel.aggregate([
+        {
+            $match: {
+                date: { $gte: thirtyDaysAgo, $lte: today },
+            },
+        },
+        {
+            $group: {
+                _id: {
+                    $dateToString: { format: "%Y-%m-%d", date: "$date" },
+                },
+                count: { $sum: 1 },
+            },
+        },
+        {
+            $sort: { _id: 1 },
+        },
+    ]);
+
+    // Crear un mapa para mapear los resultados por fecha
+    const resultMap = new Map();
+    result.forEach((entry) => {
+        resultMap.set(entry._id, entry.count);
+    });
+
+    // Crear el array con los objetos que contienen la fecha y el número de usuarios
+    const transactionsPerDay = [];
+    const currentDate = new Date(thirtyDaysAgo);
+    while (currentDate <= today) {
+        const formattedDate = currentDate.toISOString().slice(0, 10);
+        const count = resultMap.get(formattedDate) ?? 0;
+        transactionsPerDay.push({ date: formattedDate, count });
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    // Devolver el resultado
+    res.json(transactionsPerDay);
+};
+
+export { getUserList, updateAccess, newUsersPerDay, transactionPerDay };
