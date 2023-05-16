@@ -440,7 +440,7 @@ const propertieBuy = async (req: Request, res: Response) => {
             res.status(404).json({ msg: "Wrong propertie Id" });
             return;
         }
-        if (propertie.owner !== undefined) {
+        if (propertie.owner !== undefined && propertie.owner !== null) {
             res.status(400).json({ msg: "Propertie owned" });
             return;
         }
