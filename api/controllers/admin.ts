@@ -2,6 +2,8 @@ import Users from "../models/users";
 import { Request, Response, response } from "express";
 import UserModel from "../models/users";
 import PropertyPurchaseDataModel from "../models/statsAdmin";
+import PropertieModel from "../models/properties";
+import OfferModel from "../models/offers";
 
 /**
  * @swagger
@@ -86,34 +88,57 @@ const getUserList = (req: Request, res: Response) => {
         .catch((err) => res.status(500).json(err));
 };
 
-const updateAccess = (req: Request, res: Response) => {
+const updateAccess = async (req: Request, res: Response) => {
     if (req.params.id === undefined) {
         res.status(400).json({
             message: "user id is required",
         });
         return;
     }
-
-    const { access } = req.body;
-
-    if (access === undefined) {
+    if (req.body.access === undefined) {
         res.status(400).json({
             message: "attribute access is required",
         });
         return;
     }
 
-    Users.findByIdAndUpdate(
-        req.params.id,
-        { access },
-        { new: true } // devuelve el usuario actualizado
-    )
-        .then((user) =>
-            !user
-                ? res.status(404).json({ message: "User not found" })
-                : res.status(200).json(user)
-        )
-        .catch((err) => res.status(500).json(err));
+    let access = true;
+    if (req.body.access === false) {
+        access = false;
+    }
+
+    try {
+        if (!access) {
+            const propertieList = await PropertieModel.find({
+                owner: req.params.id,
+            });
+
+            for (const propertie of propertieList) {
+                await PropertieModel.findByIdAndUpdate(propertie.id, {
+                    owner: null,
+                });
+            }
+
+            const filterOffers = {
+                $or: [{ owner: req.params.id }, { offerer: req.params.id }],
+            };
+
+            await OfferModel.deleteMany(filterOffers);
+        }
+        const user = await Users.findByIdAndUpdate(
+            req.params.id,
+            { access },
+            { new: true } // devuelve el usuario actualizado
+        );
+
+        if (user === null) {
+            res.status(404).json({ message: "User not found" });
+        } else {
+            res.status(200).json(user);
+        }
+    } catch (err) {
+        res.status(500).json(err);
+    }
 };
 
 const newUsersPerDay = async (req: Request, res: Response) => {
