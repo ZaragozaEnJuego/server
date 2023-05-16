@@ -8,7 +8,7 @@ import PropertieModel, { Propertie } from "../models/properties";
  * tags:
  *   name: Users
  *   description: The users managing API
- * /users/{id}::
+ * /users/{id}:
  *   get:
  *     summary: Get the propertie by id
  *     tags: [Users]
@@ -72,15 +72,15 @@ import PropertieModel, { Propertie } from "../models/properties";
  *                   admin:
  *                     type: boolean
  *                   stats:
- *                   type: object
- *                   properties:
- *                     date:
- *                       type: string
- *                       format: date-time
- *                       description: The date of the stats
- *                     baseIncome:
- *                       type: number
- *                       description: The baseIncome of the stats
+ *                     type: object
+ *                     properties:
+ *                        date:
+ *                          type: string
+ *                          format: date-time
+ *                          description: The date of the stats
+ *                        baseIncome:
+ *                        type: number
+ *                        description: The income of the stats
  *
  *       404:
  *         description: The user does not exis
