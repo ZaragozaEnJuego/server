@@ -4,6 +4,7 @@ import {
     newUsersPerDay,
     transactionPerDay,
     updateAccess,
+    userLoginsPerDay,
 } from "../controllers/admin";
 import { getUser } from "../controllers/users";
 
@@ -13,5 +14,6 @@ router.get("/", getUserList);
 router.get("/:id", getUser);
 router.patch("/:id/access", updateAccess);
 router.get("/stats/newUsers", newUsersPerDay);
+router.get("/stats/logins", userLoginsPerDay);
 router.get("/stats/transactionsPerDay", transactionPerDay);
 export default router;

@@ -4,6 +4,7 @@ import { getAcces, getId, getIsAdmin } from "../controllers/users";
 import express from "express";
 import passport from "passport";
 import jwt from "jsonwebtoken";
+import { collectLoginStat } from "../controllers/admin";
 require("../../passport");
 
 const router = express.Router();
@@ -31,6 +32,7 @@ router.get(
                 res.redirect(`${clientUrl}`);
                 return;
             }
+            await collectLoginStat(userId as string);
             res.redirect(
                 `${clientUrl}?token=${token}&userId=${userId}&isAdmin=${isAdmin}`
             );
@@ -54,6 +56,7 @@ router.get(
             const isAdmin = await getIsAdmin(mail);
             //envio del JWT como respuesta al cliente
             //res.redirect(`${clientUrl}?token=${token}`)
+            await collectLoginStat(userId as string);
             res.redirect(
                 `${clientUrl}?token=${token}&userId=${userId}&isAdmin=${isAdmin}`
             );
@@ -77,6 +80,7 @@ router.get(
             const isAdmin = await getIsAdmin(mail);
             //envio del JWT como respuesta al cliente
             //res.redirect(`${clientUrl}?token=${token}`)
+            await collectLoginStat(userId as string);
             res.redirect(
                 `${clientUrl}?token=${token}&userId=${userId}&isAdmin=${isAdmin}`
             );
