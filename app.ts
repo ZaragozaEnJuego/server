@@ -5,6 +5,7 @@ import usersRouter from "./api/routes/users";
 import authRouter from "./api/routes/auth";
 import statsRouter from "./api/routes/stats";
 import offerRouter from "./api/routes/offers";
+import adminRouter from "./api/routes/admin";
 import middlewareAuth from "./api/controllers/middlewareAuth";
 import cron from "node-cron";
 import logger from "./api/controllers/logger";
@@ -104,5 +105,6 @@ app.use("/properties", propertiesRouter);
 app.use("/users", usersRouter);
 app.use("/weather", statsRouter);
 app.use("/offers", offerRouter);
+app.use("/admin", adminRouter);
 
 export default app;
