@@ -16,6 +16,7 @@ const userSchema = new Schema<User>({
   liquidity: { type: Number, required: true },
   mail: { type: String, required: true },
   created: { type: Date, default: Date.now },
+  access: { type: Boolean, default: true, required: true},
   admin: { type: Boolean, required: true },
 });
 
