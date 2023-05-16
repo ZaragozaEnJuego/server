@@ -8,7 +8,7 @@ import PropertieModel, { Propertie } from "../models/properties";
  * tags:
  *   name: Users
  *   description: The users managing API
- * /users/{id}::
+ * /users/{id}:
  *   get:
  *     summary: Get the propertie by id
  *     tags: [Users]

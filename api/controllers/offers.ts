@@ -343,13 +343,7 @@ const deleteOffer = async (req: Request, res: Response) => {
  *                      id:
  *                        type: string
  *        404:
- *           description: The offer does not exist
- *        404:
- *           description: Offerer not found
- *        404:
- *           description: Not enought balance
- *        404:
- *           description: Owner not found
+ *           description: The offer does not exist, Offerer not found, Not enought balance, Owner not found
  *        500:
  *           description: Some server error
  */
