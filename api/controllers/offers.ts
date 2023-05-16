@@ -11,13 +11,13 @@ import { collectPropertyPurchaseInfo } from "./admin";
  * tags:
  *    name: Offers
  *    description: The offers managing API
- * /offers:
+ * /offers/offerer/{id}:
  *    get:
  *      summary: List all offers when offerer is user
  *      tags: [Offers]
  *      parameters:
  *        - in: path
- *          name: offerer
+ *          name: id
  *          schema:
  *             type: string
  *          required: true
@@ -97,13 +97,13 @@ const getOffererOffers = async (req: Request, res: Response) => {
  * tags:
  *    name: Offers
  *    description: The offers managing API
- * /offers:
+ * /offers/owner/{id}:
  *    get:
  *      summary: List all offers when owner is user
  *      tags: [Offers]
  *      parameters:
  *        - in: path
- *          name: owner
+ *          name: id
  *          schema:
  *             type: string
  *          required: true
@@ -183,7 +183,7 @@ const getOwnerOffers = async (req: Request, res: Response) => {
  * tags:
  *    name: Offers
  *    description: The offers managing API
- * /offers/{id}::
+ * /offers/:
  *    post:
  *      summary: Create a new offer
  *      tags: [Offers]
@@ -194,6 +194,12 @@ const getOwnerOffers = async (req: Request, res: Response) => {
  *             type: string
  *          required: true
  *          description: The id of the property which is going to be offered
+ *        - in: path
+ *          name: offerer
+ *          schema:
+ *             type: number
+ *          required: true
+ *          description: The property offerer id
  *        - in: path
  *          name: amount
  *          schema:
@@ -261,6 +267,39 @@ const createOffer = async (req: Request, res: Response) => {
     }
 };
 
+/**
+ * @swagger
+ * tags:
+ *    name: Offers
+ *    description: The offers managing API
+ * /offers/{id}:
+ *    delete:
+ *      summary: Delete an offer
+ *      tags: [Offers]
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          schema:
+ *             type: string
+ *          required: true
+ *          description: offer id
+ *      responses:
+ *        201:
+ *          description: Offer deleted
+ *          content:
+ *              application/json:
+ *                schema:
+ *                  type: array
+ *                  items:
+ *                    type: object
+ *                    properties:
+ *                      id:
+ *                        type: string
+ *        400:
+ *           description: No id provided
+ *        500:
+ *           description: Some server error
+ */
 const deleteOffer = async (req: Request, res: Response) => {
     const id = req.params.id;
     if (id === undefined || !mongoose.isObjectIdOrHexString(id)) {
@@ -275,7 +314,45 @@ const deleteOffer = async (req: Request, res: Response) => {
         res.status(500).json({ msg: error.message });
     }
 };
-
+/**
+ * @swagger
+ * tags:
+ *    name: Offers
+ *    description: The offers managing API
+ * /offers/accept/{id}:
+ *    post:
+ *      summary: Delete an offer
+ *      tags: [Offers]
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          schema:
+ *             type: string
+ *          required: true
+ *          description: offer id
+ *      responses:
+ *        201:
+ *          description: Offer deleted
+ *          content:
+ *              application/json:
+ *                schema:
+ *                  type: array
+ *                  items:
+ *                    type: object
+ *                    properties:
+ *                      id:
+ *                        type: string
+ *        404:
+ *           description: The offer does not exist
+ *        404:
+ *           description: Offerer not found
+ *        404:
+ *           description: Not enought balance
+ *        404:
+ *           description: Owner not found
+ *        500:
+ *           description: Some server error
+ */
 const execOffer = async (req: Request, res: Response) => {
     const id = req.params.id;
     if (id === undefined || !mongoose.isObjectIdOrHexString(id)) {

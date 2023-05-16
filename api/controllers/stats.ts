@@ -151,7 +151,36 @@ const setWeatherData = async () => {
   }, { maxTimeMS: 20000 }); // 20 segundos de tiempo máximo de espera
   
 };
-
+/**
+ * @swagger
+ * tags:
+ *    name: Stats
+ *    description: The stats managing API
+ * /weather/:
+ *    get:
+ *      summary: Delete an offer
+ *      tags: [Stats]
+ *      responses:
+ *        200:
+ *          description: Offer deleted
+ *          content:
+ *              application/json:
+ *                schema:
+ *                  type: array
+ *                  items:
+ *                    type: object
+ *                    properties:
+ *                      date:
+ *                          type: Date
+ *                       temperature: 
+ *                          type: number
+ *                       state: 
+ *                          type: string
+ *                       electricity: 
+ *                          type: number
+ *        500:
+ *           description: Some server error
+ */
 async function getWeatherData(req: Request, res: Response) {
   
   const today = new Date(); // Get current date
@@ -171,7 +200,7 @@ async function getWeatherData(req: Request, res: Response) {
   }
   
   // Objeto json
-  res.json(weatherData);
+  res.status(200).json(weatherData);
 }
 
 export { setWeatherData, getAemetData, getWeatherData, getElectricityZaragozaPrice, getSkyState };
