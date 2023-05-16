@@ -1,5 +1,5 @@
 import { Response, Request } from "express";
-import { getId, getIsAdmin } from "../controllers/users";
+import { getAcces, getId, getIsAdmin } from "../controllers/users";
 
 import express from "express";
 import passport from "passport";
@@ -26,6 +26,11 @@ router.get(
             const isAdmin = await getIsAdmin(mail);
             //envio del JWT como respuesta al cliente
             //res.redirect(`${clientUrl}?token=${token}`)
+            const access = await getAcces(mail);
+            if (access === false) {
+                res.redirect(`${clientUrl}`);
+                return;
+            }
             res.redirect(
                 `${clientUrl}?token=${token}&userId=${userId}&isAdmin=${isAdmin}`
             );
