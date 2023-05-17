@@ -1,3 +1,12 @@
+/*  Sistemas y Tecnologías Web - Fabra Caro, Francisco
+*   Proyecto:                    Zaragoza en Juego 
+*   Fichero:                     users_test.ts
+*   Desarrolladores:             Aréjula Aísa, Íñigo                  - 785370              
+*                                González Martínez de Apellániz, Ibón - 756878
+*                                Ruiz Borao, Juan José                - 756640
+*                                Penacho, Ismael                      - 774572
+*/
+
 import { Request, Response } from "express";
 import UserModel from "../../api/models/users"; // importa tu modelo de Mongoose
 import { getUser, findOrCreateUser, getIsAdmin, getId, getAcces } from "../../api/controllers/users";
